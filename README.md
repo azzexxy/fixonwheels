@@ -4,8 +4,6 @@ Website for Fix on Wheels, a mobile phone and laptop repair van in Ghent (Rune W
 
 Everything is in one file: `index.html`. Open it in a browser, no build step.
 
-The 3D van on the landing page is drawn with three.js, loaded from the jsDelivr CDN by the module script at the bottom of `index.html`. If it can't load, the rest of the page still works.
-
 ## Before going live
 
 At the top of the `<script>` in `index.html`, edit `CONFIG`:

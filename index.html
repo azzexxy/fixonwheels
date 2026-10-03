@@ -71,43 +71,35 @@ section{padding:clamp(72px,10vw,128px) 0}
 .top.solid .nav .btn{color:#20194A}
 @media (max-width:760px){.nav a:not(.btn){display:none}}
 
-/* HERO: the van drives, parks and opens as you scroll.
-   Without .live (3D failed to load) the three chapters simply stack. */
-.hero{position:relative;padding:0;color:#fff;background:linear-gradient(#2E2A72,#5F4C8E 60%,#B56A8F)}
-.hero .wrap{width:100%}
-.hero-pin{position:relative;display:flex;flex-direction:column}
-.hero-pin::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(16,13,46,.66),rgba(16,13,46,.3) 38%,transparent 62%)}
-.hero-pin::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:var(--dim,0);background:linear-gradient(90deg,rgba(16,13,46,.8),rgba(16,13,46,.45) 40%,transparent 64%)}
-#scene{display:none;position:absolute;inset:0;width:100%;height:100%}
-.hero-copy{position:relative;z-index:2;flex:1;display:grid;align-content:center;gap:56px;padding-top:calc(env(safe-area-inset-top,0px) + 120px);padding-bottom:72px}
-.chapter{max-width:640px}
-.hero h1,.chapter h2{font-size:clamp(2.2rem,4.15vw,3.7rem);line-height:.95;letter-spacing:-.025em;max-width:none}
-.hero h1 span{display:block;white-space:nowrap}
-.hero h1 .l2{font-stretch:62%;font-weight:300;letter-spacing:0;font-size:1.28em}
-.hero .lede{color:#fff;max-width:36ch}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-.hero-actions .btn-ghost{color:#fff}
-.hero-foot{display:none;position:relative;z-index:2;align-items:center;justify-content:space-between;gap:16px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 22px)}
-.legs{list-style:none;display:flex;gap:6px;margin:0;padding:0}
-.legs button{font:inherit;font-size:.9rem;font-weight:600;color:rgba(255,255,255,.7);background:none;border:0;padding:10px 14px 10px 0;cursor:pointer;display:flex;align-items:center;gap:8px}
-.legs button::before{content:"";width:22px;height:4px;border-radius:4px;background:rgba(255,255,255,.35);transition:width .25s ease,background .25s ease}
-.legs button[aria-current="step"]{color:#fff}
-.legs button[aria-current="step"]::before{width:44px;background:var(--amber)}
-.cue{font-size:.85rem;color:rgba(255,255,255,.75);margin:0;transition:opacity .3s ease}
-.hero.live{height:380vh}
-.hero.live .hero-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
-.hero.live #scene{display:block}
-.hero.live .hero-copy{align-content:center;gap:0;padding-top:calc(env(safe-area-inset-top,0px) + 64px);padding-bottom:0}
-.hero.live .chapter{grid-area:1/1;opacity:0;will-change:opacity,transform}
-.hero.live .hero-foot{display:flex}
-@media (max-width:860px){
-  .hero-pin::after{background:linear-gradient(rgba(16,13,46,.7),rgba(16,13,46,.25) 46%,transparent 62%)}
-  .hero h1,.chapter h2{font-size:clamp(1.9rem,8.6vw,3.2rem)}
-  .hero h1 span{white-space:normal}
-  .hero h1 span:first-child{font-stretch:100%}
-  .hero.live .hero-copy{align-content:start;padding-top:calc(env(safe-area-inset-top,0px) + 92px)}
-  .legs button{font-size:0;padding-right:0;gap:0}
-  .cue{font-size:.8rem}
+/* HERO: the page opens as a cracked screen; the van parks and fixes it. Tap to crack it again. */
+.hero{--road:clamp(54px,9vh,84px);--vanw:min(clamp(230px,31vw,430px),40vh);position:relative;min-height:100vh;min-height:100svh;padding:0;color:#fff;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(#262262,#5A4A90 52%,#B96F8E 80%,#F2A16E);cursor:crosshair;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.hero-copy{position:relative;z-index:2;padding:calc(env(safe-area-inset-top,0px) + 84px) 20px calc(var(--road) + var(--vanw) * .56 + 28px)}
+.hero h1{font-size:clamp(3rem,min(14vw,17vh),12.5rem);line-height:.82;letter-spacing:-.035em}
+.hero h1 span{display:block}
+.hero h1 .l2{font-stretch:62%;font-weight:300;letter-spacing:0;font-size:1.34em}
+.hero .lede{color:#fff;max-width:none;margin:clamp(18px,3vh,30px) auto 0}
+.hero .btn{margin-top:22px;cursor:pointer}
+.skyline{position:absolute;left:0;right:0;bottom:var(--road);width:100%;height:clamp(110px,24vh,220px);display:block}
+.skyline path{fill:#221D5A;opacity:.72}
+.skyline rect{fill:#FFD27A;opacity:.85}
+.road{position:absolute;left:0;right:0;bottom:0;height:var(--road);background:#17133D;border-top:3px solid #2E2870}
+.road::after{content:"";position:absolute;left:0;right:0;top:54%;height:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 42px,transparent 42px 96px)}
+.van{position:absolute;z-index:3;left:50%;bottom:calc(var(--road) - var(--vanw) * .05);width:var(--vanw);transform:translate3d(calc(-50% + var(--vx,0px)),0,0);will-change:transform;pointer-events:none}
+.van svg{display:block;width:100%;height:auto;overflow:visible}
+.van .beam{opacity:0;transition:opacity .5s ease}
+.van.driving .beam{opacity:1}
+.van .lampglow{opacity:0;transition:opacity .25s ease}
+.van.working .lampglow{opacity:1}
+.ring{position:absolute;z-index:4;width:0;height:0;border-radius:50%;border:2px solid rgba(255,244,214,.95);box-shadow:0 0 34px 8px rgba(255,214,140,.5),inset 0 0 34px 8px rgba(255,214,140,.28);transform:translate(-50%,-50%);opacity:0;pointer-events:none}
+.glass{position:absolute;inset:0;z-index:5;width:100%;height:100%;pointer-events:none;-webkit-mask-image:radial-gradient(circle at var(--hx,50%) var(--hy,100%),transparent calc(var(--hr,0px) - 70px),#000 var(--hr,0px));mask-image:radial-gradient(circle at var(--hx,50%) var(--hy,100%),transparent calc(var(--hr,0px) - 70px),#000 var(--hr,0px))}
+.glass path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.glass .lit{stroke:#fff}
+.glass .shade{stroke:rgba(12,10,38,.45)}
+.cue{position:absolute;z-index:6;left:0;right:0;padding:0 16px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);margin:0;font-size:.85rem;color:rgba(255,255,255,.78);opacity:0;transition:opacity .5s ease;pointer-events:none}
+.hero.fixed .cue{opacity:1}
+@media (max-width:760px){
+  .hero{--vanw:min(64vw,300px,34vh)}
+  .hero h1{font-size:clamp(3rem,min(19vw,13vh),6rem)}
 }
 
 /* REPAIR DEMO */
@@ -295,39 +287,49 @@ footer{background:var(--ink);color:rgba(255,255,255,.8);padding:56px 0 calc(40px
 <main>
 <!-- HERO -->
 <section class="hero" id="hero" aria-labelledby="hero-title">
-  <div class="hero-pin">
-    <canvas id="scene" aria-hidden="true"></canvas>
-    <div class="wrap hero-copy">
-      <div class="chapter">
-        <h1 id="hero-title"><span>Shops close at six.</span><span class="l2">We start at six.</span></h1>
-        <p class="lede">A repair van for phones and laptops in Ghent. We drive to you after work and fix your device while you watch.</p>
-        <div class="hero-actions">
-          <a class="btn btn-amber" href="#book">Book an evening slot</a>
-          <a class="btn btn-ghost" href="#area">Check your town</a>
-        </div>
-      </div>
-      <div class="chapter">
-        <h2>We park at your door.</h2>
-        <p class="lede">Home or office, weekday evenings from 18:00 and all day Saturday, up to 30 km around Ghent.</p>
-      </div>
-      <div class="chapter">
-        <h2>Fixed while you watch.</h2>
-        <p class="lede">The van is the workshop. Most repairs take 30 to 60 minutes, and your phone never leaves your sight.</p>
-        <div class="hero-actions">
-          <a class="btn btn-amber" href="#book">Book an evening slot</a>
-          <a class="btn btn-ghost" href="#prices">See prices</a>
-        </div>
-      </div>
-    </div>
-    <div class="wrap hero-foot">
-      <ol class="legs" aria-label="The visit, step by step">
-        <li><button type="button" aria-current="step">On the way</button></li>
-        <li><button type="button">At your door</button></li>
-        <li><button type="button">Workshop open</button></li>
-      </ol>
-      <p class="cue" id="cue">Scroll to follow the van</p>
-    </div>
+  <svg class="skyline" id="skyline" viewBox="0 0 1600 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="hero-copy">
+    <h1 id="hero-title"><span>Fix on</span><span class="l2">Wheels</span></h1>
+    <p class="lede">Phone and laptop repair at your door in Ghent.</p>
+    <a class="btn btn-amber" href="#book">Book a repair</a>
   </div>
+  <div class="road" aria-hidden="true"></div>
+  <div class="van" id="van" aria-hidden="true">
+    <svg viewBox="0 0 400 222">
+      <defs>
+        <linearGradient id="vanPaint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFCB69"/><stop offset=".5" stop-color="#FFB238"/><stop offset="1" stop-color="#E8930C"/></linearGradient>
+        <linearGradient id="vanGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5A55A8"/><stop offset=".5" stop-color="#2B2560"/><stop offset="1" stop-color="#17133D"/></linearGradient>
+        <linearGradient id="vanBeam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE6A8" stop-opacity=".75"/><stop offset="1" stop-color="#FFE6A8" stop-opacity="0"/></linearGradient>
+        <radialGradient id="vanLamp"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".95"/><stop offset="1" stop-color="#FFF6D8" stop-opacity="0"/></radialGradient>
+      </defs>
+      <ellipse cx="200" cy="214" rx="196" ry="8" fill="#0C0A26" opacity=".5"/>
+      <polygon class="beam" points="384,140 660,104 660,206" fill="url(#vanBeam)"/>
+      <g class="body">
+        <path d="M18 186V66Q18 40 46 40H246Q270 40 285 56L330 106Q336 112 346 114L370 120Q388 124 388 144V174Q388 186 376 186Z" fill="url(#vanPaint)"/>
+        <path d="M30 52Q34 46 46 46H244Q262 46 274 58" fill="none" stroke="#FFE3A6" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+        <path d="M250 56H262Q271 56 278 64L314 106H250Z" fill="url(#vanGlass)"/>
+        <path d="M256 62H262Q268 62 273 68L286 84" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".35"/>
+        <path d="M18 168H388V174Q388 186 376 186H18Z" fill="#20194A"/>
+        <path d="M92 58V168M238 58V168" stroke="#D98A0E" stroke-width="2"/>
+        <rect x="216" y="116" width="14" height="5" rx="2.5" fill="#20194A"/>
+        <rect x="262" y="118" width="14" height="5" rx="2.5" fill="#20194A"/>
+        <text x="158" y="112" text-anchor="middle" font-family="Archivo,Arial" font-weight="900" font-size="34" font-stretch="125%" fill="#20194A">Fix on</text>
+        <text x="158" y="142" text-anchor="middle" font-family="Archivo,Arial" font-weight="300" font-size="26" font-stretch="70%" fill="#20194A">Wheels, Ghent</text>
+        <rect x="370" y="130" width="18" height="12" rx="5" fill="#FFF4CF"/>
+        <rect x="346" y="148" width="42" height="4" rx="2" fill="#FFF4CF" opacity=".8"/>
+        <rect x="18" y="94" width="7" height="36" rx="3.5" fill="#FF4D5E"/>
+        <rect x="296" y="96" width="12" height="16" rx="3" fill="#20194A"/>
+        <circle class="lampglow" cx="150" cy="36" r="54" fill="url(#vanLamp)"/>
+        <rect x="136" y="32" width="28" height="9" rx="4.5" fill="#FFF6D8"/>
+        <path d="M56 186A40 40 0 0 1 136 186ZM270 186A40 40 0 0 1 350 186Z" fill="#20194A"/>
+      </g>
+      <g transform="translate(96 186)"><g class="spin"><circle r="31" fill="#120F30"/><circle r="20" fill="#CFCDE0"/><path d="M0-19V19M-18-6L18 6M-11 15L11-15M-18 6L18-6M-11-15L11 15" stroke="#6C6898" stroke-width="3"/><circle r="6.5" fill="#FFB238"/></g></g>
+      <g transform="translate(310 186)"><g class="spin"><circle r="31" fill="#120F30"/><circle r="20" fill="#CFCDE0"/><path d="M0-19V19M-18-6L18 6M-11 15L11-15M-18 6L18-6M-11-15L11 15" stroke="#6C6898" stroke-width="3"/><circle r="6.5" fill="#FFB238"/></g></g>
+    </svg>
+  </div>
+  <div class="ring" id="ring" aria-hidden="true"></div>
+  <svg class="glass" id="glass" aria-hidden="true"></svg>
+  <p class="cue" id="cue">Tap anywhere to crack the screen. We'll fix it.</p>
 </section>
 
 <!-- REPAIR DEMO -->
@@ -557,6 +559,95 @@ const onScroll = () => topBar.classList.toggle('solid', scrollY > document.getEl
 addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
 const $ = id => document.getElementById(id);
+
+/* ===== HERO: a cracked screen, and the van that fixes it ===== */
+const hero = $('hero'), glass = $('glass'), vanEl = $('van'), ring = $('ring');
+const vanBody = vanEl.querySelector('.body'), spins = vanEl.querySelectorAll('.spin'), heroCopy = hero.querySelector('.hero-copy');
+
+// skyline of step gables with a few lit windows
+{ const sky = $('skyline'); let d = '', x = -20;
+  while (x < 1620) {
+    const w = 74 + rnd()*52, h = 70 + rnd()*80, st = 3 + Math.floor(rnd()*2), s = w / (2*st + 2); let cx = x, cy = 220 - h;
+    d += `M${x.toFixed(1)} 220V${cy.toFixed(1)}`;
+    for (let i = 0; i < st; i++) { cx += s; d += `H${cx.toFixed(1)}`; cy -= s*.9; d += `V${cy.toFixed(1)}`; }
+    cx += 2*s; d += `H${cx.toFixed(1)}`;
+    for (let i = 0; i < st; i++) { cy += s*.9; d += `V${cy.toFixed(1)}`; cx += s; d += `H${cx.toFixed(1)}`; }
+    d += 'V220Z';
+    for (let c = 0; c < 2; c++) if (rnd() > .45) el('rect', { x: x + w*(.24 + c*.36), y: 220 - h + 16 + Math.floor(rnd()*2)*26, width: 9, height: 14, rx: 1.5 }, sky);
+    x += w + 3;
+  }
+  sky.insertBefore(el('path', { d }), sky.firstChild);
+}
+
+let healing = false, parked = false, healTimer = null;
+function heroCrack(px, py) {
+  const reach = Math.max(hero.clientWidth, hero.clientHeight), g = el('g', {}, glass), paths = [], rays = 9 + Math.floor(Math.random()*5);
+  for (let i = 0; i < rays; i++) {
+    let a = (i / rays) * Math.PI * 2 + Math.random() * .4, len = 0, cx = px, cy = py, d = `M${px.toFixed(1)} ${py.toFixed(1)}`;
+    const max = reach * (.14 + Math.random() * .42);
+    while (len < max) { const st = 18 + Math.random()*46; a += (Math.random() - .5) * .5; cx += Math.cos(a)*st; cy += Math.sin(a)*st; len += st; d += `L${cx.toFixed(1)} ${cy.toFixed(1)}`; }
+    paths.push([d, len, 1 + Math.random()*1.5]);
+  }
+  for (let r = 1; r <= 3; r++) {
+    let d = ''; const R = r * (26 + Math.random()*22), segs = 9;
+    for (let j = 0; j <= segs; j++) { const a = j / segs * Math.PI * 2, rr = R + (Math.random() - .5) * 14; d += (j ? 'L' : 'M') + (px + Math.cos(a)*rr).toFixed(1) + ' ' + (py + Math.sin(a)*rr).toFixed(1); }
+    paths.push([d, R * 7, 1]);
+  }
+  paths.forEach(([d, l, w]) => ['shade', 'lit'].forEach(cls => {
+    const p = el('path', { d, class: cls, 'stroke-width': w, opacity: cls === 'lit' ? .88 : 1, transform: cls === 'shade' ? 'translate(1.5 2)' : '' }, g);
+    if (!reduce) { p.style.strokeDasharray = l; p.style.strokeDashoffset = l; p.getBoundingClientRect(); p.style.transition = 'stroke-dashoffset .5s cubic-bezier(.2,.8,.2,1)'; p.style.strokeDashoffset = 0; }
+  }));
+  el('circle', { cx: px, cy: py, r: 6, fill: '#fff', opacity: .85 }, g);
+  if (!reduce) heroCopy.animate([{ transform: 'none' }, { transform: 'translate(-6px,3px)' }, { transform: 'translate(4px,-3px)' }, { transform: 'none' }], { duration: 240 });
+  if (navigator.vibrate) navigator.vibrate(25);
+}
+// a ring of light spreads from the lamp on the van roof and takes the cracks with it
+function heal() {
+  if (healing || !glass.childElementCount) return;
+  healing = true; vanEl.classList.add('working');
+  const hr = hero.getBoundingClientRect(), vr = vanEl.getBoundingClientRect();
+  const x = vr.left - hr.left + vr.width * .375, y = vr.top - hr.top + vr.height * .16;
+  const max = Math.hypot(Math.max(x, hr.width - x), Math.max(y, hr.height - y)) + 90, t0 = performance.now(), dur = reduce ? 1 : 1250;
+  hero.style.setProperty('--hx', x + 'px'); hero.style.setProperty('--hy', y + 'px');
+  ring.style.left = x + 'px'; ring.style.top = y + 'px';
+  const step = now => {
+    const t = clamp((now - t0) / dur), r = ease(t) * max;
+    hero.style.setProperty('--hr', r.toFixed(1) + 'px');
+    ring.style.width = ring.style.height = (2 * r).toFixed(1) + 'px'; ring.style.opacity = t < 1 ? .95 * (1 - t * t) : 0;
+    if (t < 1) return requestAnimationFrame(step);
+    glass.innerHTML = ''; hero.style.setProperty('--hr', '0px'); ring.style.width = ring.style.height = '0';
+    healing = false; vanEl.classList.remove('working'); hero.classList.add('fixed');
+  };
+  requestAnimationFrame(step);
+}
+function driveIn() {
+  const vw = vanEl.offsetWidth, from = -(hero.clientWidth / 2 + vw), t0 = performance.now(), dur = 2300, rpx = 31 * vw / 400;
+  vanEl.classList.add('driving');
+  const step = now => {
+    const t = clamp((now - t0) / dur), e = 1 - Math.pow(1 - t, 3), x = from * (1 - e);
+    vanEl.style.setProperty('--vx', x.toFixed(1) + 'px');
+    spins.forEach(s => s.setAttribute('transform', `rotate(${(x / rpx * 57.3).toFixed(1)})`));
+    const dip = 1.5 * Math.sin(Math.PI * clamp((t - .5) / .5)) * (1 - t * .4);
+    vanBody.setAttribute('transform', `translate(0 ${(Math.sin(now / 70) * 1.3 * (1 - e)).toFixed(2)}) rotate(${dip.toFixed(2)} 200 186)`);
+    if (t < 1) return requestAnimationFrame(step);
+    vanBody.removeAttribute('transform'); vanEl.classList.remove('driving'); parked = true; setTimeout(heal, 300);
+  };
+  requestAnimationFrame(step);
+}
+hero.addEventListener('pointerdown', e => {
+  if (!parked || healing || e.target.closest('a,button')) return;
+  const r = hero.getBoundingClientRect();
+  heroCrack(e.clientX - r.left, e.clientY - r.top);
+  clearTimeout(healTimer); healTimer = setTimeout(heal, reduce ? 1200 : 850);
+});
+if (reduce) { parked = true; hero.classList.add('fixed'); }
+else {
+  vanEl.style.setProperty('--vx', '-200vw');
+  const W = hero.clientWidth, H = hero.clientHeight;
+  setTimeout(() => heroCrack(W * .26, H * .3), 350);
+  setTimeout(() => heroCrack(W * .76, H * .52), 620);
+  setTimeout(driveIn, 900);
+}
 
 /* ===== REPAIR DEMO ===== */
 const STEPS = {
@@ -921,309 +1012,6 @@ phoneStage.addEventListener('pointermove', e => {
   phone.style.setProperty('--rx', (.5 - (e.clientY - r.top) / r.height) * 16 + 'deg');
 });
 phoneStage.addEventListener('pointerleave', () => { phone.style.removeProperty('--ry'); phone.style.removeProperty('--rx'); });
-</script>
-<!-- 3D van in the hero. If this fails to load, the hero falls back to plain stacked text. -->
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-
-const hero = document.getElementById('hero'), canvas = document.getElementById('scene');
-const chapters = [...hero.querySelectorAll('.chapter')], legs = [...hero.querySelectorAll('.legs button')], cue = document.getElementById('cue');
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-const lerp = (a, b, t) => a + (b - a) * t;
-const ss = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
-
-try {
-  await document.fonts.load('800 64px Archivo').catch(() => {});
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(30, 1, .5, 400);
-  scene.fog = new THREE.Fog('#F2A16E', 16, 75);
-
-  const M = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: .85, ...o });
-  const glow = (color, emissive, k = 0) => new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity: k, roughness: .6 });
-  const block = (w, h, d, mat, x, y, z, parent = scene) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m;
-  };
-  const flat = (...a) => { const m = block(...a); m.castShadow = false; return m; };
-  const label = (w, h, paint) => {
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const g = c.getContext('2d'); g.textAlign = 'center'; g.textBaseline = 'middle'; paint(g);
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
-  };
-
-  /* sky: a gradient painted behind everything, with the horizon matched to the fog */
-  const skyC = document.createElement('canvas'); skyC.width = 4; skyC.height = 256;
-  const skyG = skyC.getContext('2d'), skyT = new THREE.CanvasTexture(skyC); skyT.colorSpace = THREE.SRGBColorSpace; scene.background = skyT;
-  const C = h => new THREE.Color(h);
-  const sky = { top: [C('#3B3F8E'), C('#0C0A26')], mid: [C('#9C7AA8'), C('#17133D')], hor: [C('#F2A16E'), C('#2E2766')] };
-  const cTop = C(0), cMid = C(0), cHor = C(0);
-  const sg = new THREE.BufferGeometry(), sp = [];
-  for (let i = 0; i < 320; i++) { const a = Math.random() * Math.PI * 2, e = .08 + Math.random() * 1.3; sp.push(Math.cos(a) * Math.cos(e) * 150, Math.sin(e) * 150, Math.sin(a) * Math.cos(e) * 150); }
-  sg.setAttribute('position', new THREE.Float32BufferAttribute(sp, 3));
-  const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: '#fff', size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false })); scene.add(stars);
-
-  /* ground */
-  const PAV = .18, FRONT = -2.3;
-  const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M('#45407F')); road.rotation.x = -Math.PI/2; road.receiveShadow = true; scene.add(road);
-  block(400, PAV, 30, M('#6A63A8'), 0, PAV/2, -1.5 - 15);
-  block(400, PAV, 60, M('#6A63A8'), 0, PAV/2, 4.4 + 30);
-  const marks = new THREE.Group(); scene.add(marks);
-  for (let x = -60; x < 100; x += 2.4) flat(1.1, .02, .12, M('#E9EAF6'), x, .02, 2.55, marks);
-
-  /* the street: five step-gabled houses and two lamps per 16 m, repeated so it can scroll forever */
-  const PERIOD = 16, street = new THREE.Group(); scene.add(street);
-  const winOff = M('#2F2A68', { roughness: .3 }), winOn = glow('#FFD27A', '#FFC25E', 1.3);
-  const shopGlass = glow('#FFE2A6', '#FFD27A', 1), doorLit = glow('#2B2560', '#FFC25E'), bulbMat = glow('#55507F', '#FFE6A8');
-  const poolMat = new THREE.MeshBasicMaterial({ color: '#FFD27A', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
-  const windows = [], shutters = [];
-  const gable = (w, h, steps) => {
-    const s = new THREE.Shape(), st = w / (2*steps + 2); let x = -w/2, y = h;
-    s.moveTo(-w/2, 0); s.lineTo(x, y);
-    for (let i = 0; i < steps; i++) { x += st; s.lineTo(x, y); y += st*.9; s.lineTo(x, y); }
-    x += 2*st; s.lineTo(x, y);
-    for (let i = 0; i < steps; i++) { y -= st*.9; s.lineTo(x, y); x += st; s.lineTo(x, y); }
-    s.lineTo(w/2, 0); return s;
-  };
-  const plots = [[3.0, 3.6, '#5A4E9E', 3], [3.6, 3.3, '#8E3B46', 4], [2.8, 4.3, '#4A4590', 3], [3.4, 3.5, '#6A5AA8', 4], [3.2, 4.0, '#51479A', 3]];
-  const houseGeo = plots.map(([w, h, , steps]) => new THREE.ExtrudeGeometry(gable(w - .06, h, steps), { depth: 3, bevelEnabled: false }));
-  const houseMat = plots.map(p => M(p[2])), lampMat = M('#1E1A48'), shutterMat = M('#B9B6CC', { roughness: .5, metalness: .3 });
-  const signMat = new THREE.MeshStandardMaterial({ roughness: .7, map: label(580, 92, g => { g.fillStyle = '#20194A'; g.fillRect(0, 0, 580, 92); g.fillStyle = '#fff'; g.font = '800 54px Archivo, Arial'; g.fillText('Phone repair', 290, 50); }) });
-  const shutterGeo = new THREE.BoxGeometry(2.8, 1.4, .08); shutterGeo.translate(0, -.7, 0);
-  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  for (let rep = -2; rep < 5; rep++) {
-    let hx = rep * PERIOD; seed = 11;
-    plots.forEach(([w, h], i) => {
-      const cx = hx + w/2; hx += w;
-      const house = new THREE.Mesh(houseGeo[i], houseMat[i]); house.position.set(cx, PAV, FRONT - 3); house.castShadow = house.receiveShadow = true; street.add(house);
-      const shop = i === 1, z = FRONT + .02, cols = Math.max(2, Math.floor(w / 1.1)), gap = (w - cols*.5) / (cols + 1);
-      for (let y = h - .8; y > (shop ? 2.6 : 2.0); y -= 1.2) for (let c = 0; c < cols; c++)
-        windows.push({ m: flat(.5, .75, .06, winOff, cx - w/2 + gap + .25 + c*(.5 + gap), PAV + y, z, street), on: .08 + rnd() * .85 });
-      if (shop) {
-        flat(2.7, 1.3, .06, shopGlass, cx, PAV + .85, z, street);
-        const sign = new THREE.Mesh(new THREE.PlaneGeometry(2.9, .46), signMat); sign.position.set(cx, PAV + 1.95, z + .03); street.add(sign);
-        const sh = new THREE.Mesh(shutterGeo, shutterMat); sh.position.set(cx, PAV + 1.55, z + .05); street.add(sh); shutters.push(sh);
-      } else flat(.62, 1.25, .06, i === 3 ? doorLit : lampMat, cx + (i === 3 ? 0 : (i % 2 ? .7 : -.7)), PAV + .625, z, street);
-    });
-    [2.4, 10.4].forEach(lx => {
-      const x = rep * PERIOD + lx;
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(.05, .06, 2.7, 8), lampMat); pole.position.set(x, PAV + 1.35, -1.75); pole.castShadow = true; street.add(pole);
-      block(.2, .08, .8, lampMat, x, PAV + 2.72, -1.45, street);
-      flat(.16, .05, .44, bulbMat, x, PAV + 2.66, -1.3, street);
-      const pool = new THREE.Mesh(new THREE.CircleGeometry(1.9, 28), poolMat); pool.rotation.x = -Math.PI/2; pool.position.set(x, .03, -.9); pool.scale.set(1, 1, 1); street.add(pool);
-    });
-  }
-  const towerMat = M('#3F3987');
-  [[26, 17], [33, 22], [40, 16]].forEach(([x, h]) => {
-    block(2.4, h, 2.4, towerMat, x, h/2, -34);
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(2, 6, 4), towerMat); cone.position.set(x, h + 3, -34); cone.rotation.y = Math.PI/4; scene.add(cone);
-  });
-
-  /* reflections for paint, glass and rims: a small painted dusk panorama */
-  const envTex = label(512, 256, g => {
-    const gr = g.createLinearGradient(0, 0, 0, 256);
-    gr.addColorStop(0, '#1B1A55'); gr.addColorStop(.42, '#8E78B8'); gr.addColorStop(.5, '#FFC39A'); gr.addColorStop(.56, '#3A3478'); gr.addColorStop(1, '#141033');
-    g.fillStyle = gr; g.fillRect(0, 0, 512, 256);
-    g.fillStyle = '#FFE9BF'; [40, 150, 265, 330, 450].forEach((x, i) => g.fillRect(x, 108 + (i % 2) * 8, 26, 9));
-    g.fillStyle = '#FFFFFF'; g.fillRect(200, 30, 60, 10);
-  });
-  envTex.mapping = THREE.EquirectangularReflectionMapping;
-  const pmrem = new THREE.PMREMGenerator(renderer), env = pmrem.fromEquirectangular(envTex).texture; pmrem.dispose();
-
-  /* the van: nose at local x = 0, tail at LEN; the sliding door faces the camera */
-  const LEN = 5.2, BV = .09, HALF = .9 + BV, WR = .42;
-  const van = new THREE.Group(); scene.add(van);
-  const tilt = new THREE.Group(); tilt.position.set(LEN/2, .5, 0); van.add(tilt);
-  const shell = new THREE.Group(); shell.position.set(-LEN/2, -.5, 0); tilt.add(shell);
-  const paint = new THREE.MeshPhysicalMaterial({ color: '#FFAE2B', roughness: .38, metalness: .15, clearcoat: 1, clearcoatRoughness: .12, envMap: env, envMapIntensity: .9 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: '#0D0B26', roughness: .06, metalness: .85, envMap: env, envMapIntensity: 1.3, side: THREE.DoubleSide });
-  const trim = M('#15122F', { roughness: .55 }), dark = M('#16132E', { roughness: .9 });
-  const chrome = new THREE.MeshStandardMaterial({ color: '#D9DAE8', roughness: .22, metalness: .95, envMap: env });
-  const AX = [1.02, 4.18], prof = new THREE.Shape();
-  prof.moveTo(.16, .44); prof.quadraticCurveTo(.02, .5, .03, 1.02); prof.quadraticCurveTo(.06, 1.38, .5, 1.45);
-  prof.lineTo(1.2, 2.2); prof.quadraticCurveTo(1.36, 2.36, 1.7, 2.36); prof.lineTo(LEN - .3, 2.36);
-  prof.quadraticCurveTo(LEN - .05, 2.36, LEN - .05, 2.1); prof.lineTo(LEN - .05, .62); prof.quadraticCurveTo(LEN - .05, .44, LEN - .22, .44);
-  prof.lineTo(AX[1] + .62, .44); prof.absarc(AX[1], .44, .62, 0, Math.PI, false);
-  prof.lineTo(AX[0] + .62, .44); prof.absarc(AX[0], .44, .62, 0, Math.PI, false); prof.closePath();
-  const D0 = 2.08, D1 = 3.42, DY0 = .68, DY1 = 2.0, hole = new THREE.Path();
-  hole.moveTo(D0, DY0); hole.lineTo(D0, DY1); hole.lineTo(D1, DY1); hole.lineTo(D1, DY0); hole.closePath(); prof.holes.push(hole);
-  const bodyGeo = new THREE.ExtrudeGeometry(prof, { depth: 1.8, curveSegments: 20, bevelEnabled: true, bevelSize: BV, bevelThickness: BV, bevelSegments: 6 }); bodyGeo.translate(0, 0, -.9);
-  const body = new THREE.Mesh(bodyGeo, paint); body.castShadow = body.receiveShadow = true; shell.add(body);
-  const cx = (D0 + D1)/2, cy = (DY0 + DY1)/2, dw = D1 - D0, dh = DY1 - DY0;
-  block(dw + .3, dh + .3, .04, paint, cx, cy, -HALF + .03, shell);                                   // closes the far side
-  // glass: windshield, wraparound cab windows, rear window
-  const ws = block(.98, .03, 1.72, glass, .85 - .078, 1.825 + .072, 0, shell); ws.rotation.z = Math.atan2(.75, .7); ws.castShadow = false;
-  const sw = new THREE.Shape(); sw.moveTo(.72, 1.5); sw.lineTo(1.3, 2.14); sw.quadraticCurveTo(1.36, 2.2, 1.46, 2.2); sw.lineTo(1.86, 2.2); sw.quadraticCurveTo(1.94, 2.2, 1.94, 2.12); sw.lineTo(1.94, 1.58); sw.quadraticCurveTo(1.94, 1.5, 1.86, 1.5); sw.closePath();
-  const swGeo = new THREE.ShapeGeometry(sw, 8);
-  [1, -1].forEach(s => { const m = new THREE.Mesh(swGeo, glass); m.position.z = s * (HALF + .006); shell.add(m); });
-  flat(.03, .5, 1.3, glass, LEN - .05 + BV, 1.85, 0, shell);
-  // nose: light bar, headlights, grille, bumper; tail: light strips, bumper
-  const NX = -BV + .02, TX = LEN - .05 + BV;
-  const ledMat = glow('#FFFFFF', '#F4F8FF', 2.4), tailMat = glow('#B01E30', '#FF3344', 1.2), blinkMat = glow('#7A4A00', '#FFA51E');
-  flat(.05, .035, 1.5, ledMat, NX, 1.16, 0, shell);
-  [1, -1].forEach(s => {
-    flat(.06, .13, .4, ledMat, NX - .005, 1.02, s * .62, shell);
-    flat(.05, .7, .07, tailMat, TX, 1.55, s * (HALF - .12), shell);
-    flat(.14, .24, .3, trim, .98, 1.56, s * (HALF + .13), shell);                                    // mirrors
-  });
-  flat(.05, .05, 1.5, tailMat, TX, 1.2, 0, shell);
-  [[NX, 1.02], [TX, 1.12]].forEach(([x, y]) => flat(.06, .1, .12, blinkMat, x, y, -(HALF - .12), shell));
-  flat(.08, .26, 1.3, trim, NX + .02, .72, 0, shell);
-  block(.2, .22, 2 * HALF + .02, trim, .1, .47, 0, shell); block(.2, .22, 2 * HALF + .02, trim, LEN - .12, .5, 0, shell);
-  [1, -1].forEach(s => flat(AX[1] - AX[0] - 1.26, .1, .03, trim, (AX[0] + AX[1])/2, .4, s * (HALF - .02), shell));  // sills
-  flat(.012, 1.5, .012, trim, 2.0, 1.35, HALF + .004, shell); flat(.14, .035, .03, trim, 1.86, 1.36, HALF + .012, shell); // cab door seam, handle
-  const beamMat = new THREE.MeshBasicMaterial({ color: '#FFE6A8', transparent: true, opacity: .16, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, fog: false });
-  const beam = new THREE.Mesh(new THREE.ConeGeometry(1.1, 5.2, 24, 1, true), beamMat); beam.rotation.z = -Math.PI/2; beam.position.set(-2.7, .9, 0); shell.add(beam);
-  const head = new THREE.SpotLight('#FFE6A8', 60, 22, .55, .7, 1.4); head.position.set(-.3, 1.05, 0); head.target.position.set(-9, 0, 0); shell.add(head, head.target);
-
-  // the workshop inside
-  const lining = M('#3A3380'), strip = glow('#E9FBFF', '#CFF6FF');
-  flat(dw + .2, .04, 1.84, M('#2A2466'), cx, DY0 - .05, 0, shell);
-  flat(dw + .2, .04, 1.84, lining, cx, DY1 + .05, 0, shell);
-  flat(.04, dh + .2, 1.84, lining, D0 - .05, cy, 0, shell);
-  flat(.04, dh + .2, 1.84, lining, D1 + .05, cy, 0, shell);
-  flat(dw + .2, dh + .2, .04, M('#B9BBD8'), cx, cy, -.88, shell);                                    // pegboard
-  flat(1.1, .04, .1, strip, cx, DY1 - .03, -.3, shell);
-  flat(dw, .46, .5, M('#4A4475'), cx, DY0 + .2, -.6, shell);                                         // cabinet
-  flat(dw + .06, .05, .6, M('#CFCDE0', { roughness: .5 }), cx, DY0 + .46, -.57, shell);              // bench top
-  [[-.5, '#FFB238', .3], [-.38, '#8E3B46', .24], [-.26, '#2E8C8A', .28], [.3, '#20194A', .2], [.42, '#FFB238', .28]].forEach(([dx, c, h]) => flat(.05, h, .03, M(c), cx + dx, DY1 - .22 - h/2, -.85, shell));
-  const benchY = DY0 + .485;
-  const phone = new THREE.Group(); phone.position.set(cx - .3, benchY + .21, -.66); phone.rotation.x = -.28; shell.add(phone);
-  flat(.22, .44, .03, dark, 0, 0, 0, phone);
-  const screenTex = label(200, 400, g => { const gr = g.createLinearGradient(0, 0, 200, 400); gr.addColorStop(0, '#2C2366'); gr.addColorStop(.55, '#2E8C8A'); gr.addColorStop(1, '#FFB238'); g.fillStyle = gr; g.fillRect(0, 0, 200, 400); g.fillStyle = '#fff'; g.font = '800 64px Archivo, Arial'; g.fillText('19:12', 100, 110); });
-  const screen = new THREE.Mesh(new THREE.PlaneGeometry(.19, .41), new THREE.MeshBasicMaterial({ map: screenTex })); screen.position.z = .017; phone.add(screen);
-  flat(.5, .03, .34, chrome, cx + .32, benchY + .015, -.52, shell);                                  // laptop
-  const lid = flat(.5, .33, .02, glow('#1E1A48', '#9FE9F2', .9), cx + .32, benchY + .19, -.72, shell); lid.rotation.x = -.2;
-  const shopLight = new THREE.PointLight('#DDF8FF', 0, 6, 1.5); shopLight.position.set(cx, DY1 - .25, -.1); shell.add(shopLight);
-  const spill = new THREE.PointLight('#DDF3FF', 0, 7, 1.6); spill.position.set(cx, 1.2, 1.9); shell.add(spill);
-
-  // sliding door with the logo
-  const door = new THREE.Group(); shell.add(door);
-  const dp = new THREE.Shape(), rw = dw/2 + .09, rh = dh/2 + .09, rr = .09;
-  dp.moveTo(-rw + rr, -rh); dp.lineTo(rw - rr, -rh); dp.quadraticCurveTo(rw, -rh, rw, -rh + rr); dp.lineTo(rw, rh - rr); dp.quadraticCurveTo(rw, rh, rw - rr, rh);
-  dp.lineTo(-rw + rr, rh); dp.quadraticCurveTo(-rw, rh, -rw, rh - rr); dp.lineTo(-rw, -rh + rr); dp.quadraticCurveTo(-rw, -rh, -rw + rr, -rh);
-  const doorMesh = new THREE.Mesh(new THREE.ExtrudeGeometry(dp, { depth: .03, bevelEnabled: true, bevelSize: .015, bevelThickness: .015, bevelSegments: 3 }), paint); doorMesh.castShadow = true; door.add(doorMesh);
-  const logo = new THREE.Mesh(new THREE.PlaneGeometry(1.14, .57), new THREE.MeshStandardMaterial({ roughness: .5, transparent: true, map: label(480, 240, g => { g.fillStyle = '#20194A'; g.font = '900 100px Archivo, Arial'; g.fillText('Fix on', 240, 86); g.font = '400 54px Archivo, Arial'; g.fillText('Wheels, Ghent', 240, 176); }) }));
-  logo.position.set(.04, .12, .047); door.add(logo);
-  flat(.035, .16, .03, trim, -rw + .12, -.08, .055, door);
-
-  // wheels: rounded tyre, alloy rim, five spokes
-  const tyreGeo = new THREE.LatheGeometry([[.25, -.15], [.37, -.15], [WR, -.1], [WR, .1], [.37, .15], [.25, .15]].map(([x, y]) => new THREE.Vector2(x, y)), 40);
-  const wheels = AX.flatMap(x => [1, -1].map(s => {
-    const g = new THREE.Group(); g.position.set(x, WR, s * .8); van.add(g);
-    const spin = new THREE.Group(); spin.rotation.x = s * Math.PI/2; g.add(spin);
-    const t = new THREE.Mesh(tyreGeo, dark); t.castShadow = true; spin.add(t);
-    const rim = new THREE.Mesh(new THREE.CylinderGeometry(.27, .27, .26, 32), chrome); spin.add(rim);
-    const face = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .28, 24), dark); spin.add(face);
-    for (let i = 0; i < 5; i++) { const sp = flat(.045, .29, .25, chrome, 0, 0, 0, spin); sp.rotation.y = i * Math.PI * 2 / 5; sp.geometry.translate(0, 0, .12); }
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, .3, 16), paint); spin.add(cap);
-    return { g, spin, s };
-  }));
-
-  /* light */
-  const hemi = new THREE.HemisphereLight('#C9CFFF', '#3A2E6E', 1); scene.add(hemi);
-  const sun = new THREE.DirectionalLight('#FFC89A', 2); sun.castShadow = true; scene.add(sun, sun.target);
-  sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0006; sun.shadow.normalBias = .03;
-  Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 12, bottom: -12, near: 1, far: 50 });
-  const dusk = C('#FFC89A'), moon = C('#8FA0FF'), hemiDay = C('#C9CFFF'), hemiNight = C('#5A5FC0');
-
-  /* state */
-  let w = 0, h = 0, p = 0, ps = 0, speed = reduce ? 0 : 1, offset = 0, last = 0, px = 0, py = 0, mx = 0, my = 0, visible = true, dirty = true;
-  const readScroll = () => { const r = hero.getBoundingClientRect(); const np = clamp(-r.top / Math.max(1, r.height - innerHeight)); if (np !== p) { p = np; dirty = true; } };
-  addEventListener('scroll', readScroll, { passive: true });
-  hero.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' && !reduce) { px = e.clientX / innerWidth - .5; py = e.clientY / innerHeight - .5; } });
-  legs.forEach((b, i) => b.addEventListener('click', () => {
-    const top = hero.getBoundingClientRect().top + scrollY, span = hero.offsetHeight - innerHeight;
-    scrollTo({ top: top + span * [0, .52, 1][i], behavior: reduce ? 'auto' : 'smooth' });
-  }));
-
-  function size() {
-    w = canvas.clientWidth; h = canvas.clientHeight; if (!w || !h) return;
-    renderer.setSize(w, h, false); camera.aspect = w / h;
-    if (w / h > 1.15) camera.setViewOffset(w, h, -.2 * w, 0, w, h); else camera.setViewOffset(w, h, 0, -.17 * h, w, h);
-    camera.updateProjectionMatrix(); dirty = true;
-  }
-  new ResizeObserver(size).observe(canvas);
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hero);
-
-  const far = new THREE.Vector3(), fwd = new THREE.Vector3();
-  let want = 1;
-  function draw(now) {
-    const p = ps, night = ss(.04, .62, p), parked = ss(.26, .52, p), close = ss(.6, .92, p), open = ss(.42, .6, p), pull = ss(.12, .36, p);
-    // sky, fog, light
-    cTop.lerpColors(sky.top[0], sky.top[1], night); cMid.lerpColors(sky.mid[0], sky.mid[1], night); cHor.lerpColors(sky.hor[0], sky.hor[1], night);
-    scene.fog.color.copy(cHor); stars.material.opacity = ss(.45, 1, night);
-    sun.color.lerpColors(dusk, moon, night); sun.intensity = lerp(1.9, .45, night);
-    sun.position.set(lerp(-12, 4, night), lerp(7, 14, night), 10);
-    hemi.color.lerpColors(hemiDay, hemiNight, night); hemi.intensity = lerp(1.15, .62, night);
-    // street
-    windows.forEach(o => { o.m.material = night > o.on ? winOn : winOff; });
-    const sh = ss(.18, .32, night); shutters.forEach(s => { s.visible = sh > 0; s.scale.y = Math.max(sh, .001); });
-    shopGlass.emissiveIntensity = 1.2 * (1 - sh); doorLit.emissiveIntensity = 1.4 * ss(.3, .4, night);
-    const lampOn = ss(.28, .4, night); bulbMat.emissiveIntensity = 2.6 * lampOn; poolMat.opacity = .16 * lampOn;
-    street.position.x = offset % PERIOD; marks.position.x = offset % 2.4;
-    // van
-    // van: rolls, pulls over to the kerb with its indicator on, dips its nose as it brakes
-    wheels.forEach(o => { o.spin.rotation.y = o.s * offset / WR; });
-    const steer = -Math.sin(pull * Math.PI) * .11;
-    van.position.set(-LEN/2, 0, lerp(1.15, .3, pull)); van.rotation.y = steer;
-    wheels[0].g.rotation.y = wheels[1].g.rotation.y = steer * 1.6;
-    const braking = clamp((speed - want) * 2.2);
-    tilt.position.y = .5 + (Math.sin(now / 95) * .009 + Math.sin(now / 240) * .007) * speed;
-    tilt.rotation.z = braking * .028; tilt.rotation.x = steer * .25;
-    tailMat.emissiveIntensity = 1.1 + braking * 3.2;
-    blinkMat.emissiveIntensity = pull > .02 && pull < .98 && now % 760 < 400 ? 3.2 : 0;
-    beamMat.opacity = .04 + .12 * speed; head.intensity = lerp(25, 60, night); paint.envMapIntensity = lerp(.95, .55, night);
-    door.position.set(cx + ss(.22, 1, open) * 1.52, cy, HALF + .012 + ss(0, .25, open) * .07);
-    shopLight.intensity = open * 3.2; spill.intensity = open * lerp(1, 3, night); strip.emissiveIntensity = open * 2.2;
-    // camera: front three-quarter while driving, side-on when parked, then up to the open door
-    mx += (px - mx) * .08; my += (py - my) * .08;
-    const fit = clamp(1.25 / camera.aspect, 1, 2.3), fitClose = clamp(.95 / camera.aspect, 1, 2.1);
-    const th = lerp(lerp(1.0, .42, parked), .24, close) + mx * .16;
-    const r = lerp(lerp(12.5 * fit, 11.5 * fit, parked), 7.6 * fitClose, close);
-    const ty = lerp(1.15, 1.32, close), tx = lerp(0, cx - LEN/2, close);
-    const tz = lerp(.75, .3, pull);
-    camera.position.set(tx - Math.sin(th) * r, lerp(lerp(1.9, 2.5, parked), 1.75, close) - my * .5, tz + Math.cos(th) * r);
-    camera.lookAt(tx, ty, tz);
-    sun.target.position.set(0, 0, 0);
-    // sky gradient, horizon at the right height on screen
-    camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
-    far.copy(camera.position).addScaledVector(fwd, 3000).setY(0).project(camera);
-    const hy = clamp((1 - far.y) / 2, .2, .95), g = skyG.createLinearGradient(0, 0, 0, 256);
-    g.addColorStop(0, '#' + cTop.getHexString()); g.addColorStop(hy * .6, '#' + cMid.getHexString()); g.addColorStop(hy, '#' + cHor.getHexString()); g.addColorStop(1, '#' + cHor.getHexString());
-    skyG.fillStyle = g; skyG.fillRect(0, 0, 4, 256); skyT.needsUpdate = true;
-    renderer.render(scene, camera);
-    // text
-    const vis = [1 - ss(.16, .28, p), ss(.36, .46, p) * (1 - ss(.58, .68, p)), ss(.76, .88, p)];
-    chapters.forEach((c, i) => { c.style.opacity = vis[i]; c.style.transform = `translate3d(0,${((1 - vis[i]) * (i === 0 ? -24 : 24)).toFixed(2)}px,0)`; c.inert = vis[i] < .5; });
-    const leg = p < .33 ? 0 : p < .7 ? 1 : 2;
-    legs.forEach((b, i) => { if (i === leg) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
-    cue.style.opacity = p > .9 ? 0 : 1; hero.style.setProperty('--dim', close);
-  }
-
-  function frame(now) {
-    requestAnimationFrame(frame);
-    const dt = Math.min(.05, (now - last) / 1000); last = now;
-    if (!visible || !w) return;
-    ps = reduce ? p : ps + (p - ps) * (1 - Math.exp(-dt * 6)); if (Math.abs(p - ps) < .0002) ps = p;
-    want = reduce ? 0 : 1 - ss(.1, .36, ps);
-    speed += (want - speed) * Math.min(1, dt * 3.5); if (Math.abs(want - speed) < .001) speed = want;
-    offset += speed * 7.5 * dt;
-    if (speed > 0 || dirty || ps !== p || Math.abs(px - mx) > .001 || Math.abs(py - my) > .001) { dirty = false; draw(now); }
-  }
-
-  hero.classList.add('live');
-  size(); readScroll();
-  requestAnimationFrame(frame);
-} catch (err) {
-  console.warn('3D van unavailable:', err);
-  hero.classList.remove('live');
-}
 </script>
 </body>
 </html>
