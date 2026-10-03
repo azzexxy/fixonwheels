@@ -94,11 +94,11 @@ section{padding:clamp(72px,10vw,128px) 0}
 .legs button[aria-current="step"]{color:#fff}
 .legs button[aria-current="step"]::before{width:44px;background:var(--amber)}
 .cue{font-size:.85rem;color:rgba(255,255,255,.75);margin:0;transition:opacity .3s ease}
-.hero.live{height:340vh}
+.hero.live{height:380vh}
 .hero.live .hero-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
 .hero.live #scene{display:block}
 .hero.live .hero-copy{align-content:center;gap:0;padding-top:calc(env(safe-area-inset-top,0px) + 64px);padding-bottom:0}
-.hero.live .chapter{grid-area:1/1;opacity:0}
+.hero.live .chapter{grid-area:1/1;opacity:0;will-change:opacity,transform}
 .hero.live .hero-foot{display:flex}
 @media (max-width:860px){
   .hero-pin::after{background:linear-gradient(rgba(16,13,46,.7),rgba(16,13,46,.25) 46%,transparent 62%)}
@@ -205,13 +205,19 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
 @media (max-width:760px){.tabs button{padding:10px 14px 10px 0}}
 .tabs button[aria-selected="true"]{color:var(--amber);border-bottom-color:var(--amber)}
 .rows{display:grid}
-.rowh,.row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;align-items:baseline;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.14)}
-.rowh{font-size:.85rem;color:rgba(255,255,255,.6);padding-top:0}
+.models{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.14)}
+.models button{font:inherit;font-size:.92rem;font-weight:600;color:rgba(255,255,255,.85);background:none;border:1.5px solid rgba(255,255,255,.28);border-radius:999px;padding:7px 14px;cursor:pointer}
+.models button:hover{border-color:#fff}
+.models button[aria-pressed="true"]{background:var(--amber);border-color:var(--amber);color:#20194A}
+.rows{column-gap:clamp(24px,4vw,56px)}
+@media (min-width:1000px){.rows{grid-template-columns:1fr 1fr}}
+.row{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.14);width:100%}
 .row .model{font-weight:600}
 .row .p{font-stretch:120%;font-weight:800;font-size:1.35rem;font-variant-numeric:tabular-nums}
 .row .p small{font-weight:500;font-size:.8rem;font-stretch:100%;color:rgba(255,255,255,.6);margin-right:4px}
-.row button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
-.row button:hover .p,.row button:focus-visible .p{color:var(--amber)}
+button.row{font:inherit;color:inherit;background:none;border-width:0 0 1px;border-style:solid;border-color:rgba(255,255,255,.14);cursor:pointer;text-align:left}
+.row .p{white-space:nowrap}
+button.row:hover .p,button.row:focus-visible .p{color:var(--amber)}
 .price-foot{margin-top:22px;font-size:.92rem;color:rgba(255,255,255,.7);max-width:64ch}
 
 /* BOOKING */
@@ -442,9 +448,12 @@ footer{background:var(--ink);color:rgba(255,255,255,.8);padding:56px 0 calc(40px
     <p class="lede">You see the price when you book. If we find something else once the phone is open, we tell you before we go on.</p>
     <div class="board">
       <div class="tabs" role="tablist" aria-label="Device type" id="tabs"></div>
-      <div class="rows" role="tabpanel" id="rows" aria-live="polite"></div>
+      <div role="tabpanel" aria-live="polite">
+        <div class="models" id="models" role="group" aria-label="Model"></div>
+        <div class="rows" id="rows"></div>
+      </div>
     </div>
-    <p class="price-foot">Prices include 21% VAT, parts, labour, and the call-out within our 30 km area. Pay by card or Payconiq when the repair is done. Tap a price to book it.</p>
+    <p class="price-foot">Prices include 21% VAT, parts, labour, and the call-out within our 30 km area. Pay by card or Payconiq when the repair is done. Pick your model, then tap a repair to book it.</p>
   </div>
 </section>
 
@@ -726,48 +735,109 @@ function check(q) {
 }
 $('townForm').addEventListener('submit', e => { e.preventDefault(); check($('town').value); });
 
-/* ===== PRICES ===== */
+/* ===== PRICES =====
+   Phones: [model, screen, battery, tier]. The tier (1 = older or budget, 4 = newest flagship)
+   sets the price of every other repair through PHONE_REPAIRS. Use 'quote' for "on quote". */
 const PRICES = {
-  iPhone: [['iPhone 15', 229, 95], ['iPhone 14', 169, 89], ['iPhone 13', 169, 85], ['iPhone 12', 139, 79], ['iPhone 11', 109, 75]],
-  'Samsung Galaxy': [['Galaxy S23', 199, 89], ['Galaxy S22', 179, 85], ['Galaxy S21', 159, 79], ['Galaxy A54', 129, 69]],
-  Laptop: [['MacBook Air', 'quote', 149], ['MacBook Pro', 'quote', 169], ['Windows laptop', 'quote', 119]]
+  iPhone: [
+    ['iPhone 17 Pro Max', 399, 119, 4], ['iPhone 17 Pro', 369, 119, 4], ['iPhone 17', 299, 109, 4],
+    ['iPhone 16 Pro Max', 369, 109, 4], ['iPhone 16 Pro', 339, 109, 4], ['iPhone 16', 269, 99, 4],
+    ['iPhone 15 Pro Max', 329, 99, 3], ['iPhone 15 Pro', 299, 99, 3], ['iPhone 15', 229, 95, 3],
+    ['iPhone 14 Pro Max', 279, 95, 3], ['iPhone 14 Pro', 259, 95, 3], ['iPhone 14', 169, 89, 3],
+    ['iPhone 13 Pro', 199, 89, 2], ['iPhone 13', 169, 85, 2], ['iPhone 13 mini', 159, 85, 2],
+    ['iPhone 12 Pro', 149, 79, 2], ['iPhone 12', 139, 79, 2], ['iPhone 11 Pro', 129, 75, 1], ['iPhone 11', 109, 75, 1],
+    ['iPhone XR', 99, 69, 1], ['iPhone SE (2020 or 2022)', 89, 65, 1]
+  ],
+  'Samsung Galaxy': [
+    ['Galaxy S25 Ultra', 349, 109, 4], ['Galaxy S25', 259, 99, 4], ['Galaxy S24 Ultra', 319, 99, 4], ['Galaxy S24', 229, 95, 3],
+    ['Galaxy S23 Ultra', 289, 95, 3], ['Galaxy S23', 199, 89, 3], ['Galaxy S22', 179, 85, 2], ['Galaxy S21', 159, 79, 2],
+    ['Galaxy Z Flip 6', 'quote', 119, 4], ['Galaxy Z Flip 5', 'quote', 109, 3],
+    ['Galaxy A56', 139, 75, 2], ['Galaxy A55', 135, 75, 2], ['Galaxy A54', 129, 69, 2], ['Galaxy A35', 119, 69, 1], ['Galaxy A34', 115, 69, 1], ['Galaxy A15', 95, 65, 1]
+  ],
+  'Google Pixel': [
+    ['Pixel 10 Pro', 299, 109, 4], ['Pixel 10', 239, 99, 4], ['Pixel 9 Pro', 279, 99, 4], ['Pixel 9', 219, 95, 3], ['Pixel 9a', 159, 85, 2],
+    ['Pixel 8 Pro', 239, 89, 3], ['Pixel 8', 189, 89, 3], ['Pixel 8a', 149, 79, 2], ['Pixel 7 Pro', 199, 85, 2], ['Pixel 7', 159, 79, 2], ['Pixel 7a', 139, 75, 1], ['Pixel 6a', 125, 69, 1]
+  ],
+  OnePlus: [
+    ['OnePlus 13', 279, 99, 4], ['OnePlus 12', 249, 95, 3], ['OnePlus 11', 199, 89, 2], ['OnePlus Nord 4', 149, 79, 2], ['OnePlus Nord 3', 139, 75, 1]
+  ],
+  Xiaomi: [
+    ['Xiaomi 15', 259, 99, 4], ['Xiaomi 14', 229, 95, 3], ['Xiaomi 13T', 169, 85, 2],
+    ['Redmi Note 14 Pro', 139, 75, 2], ['Redmi Note 13 Pro', 129, 75, 2], ['Redmi Note 13', 105, 69, 1], ['Redmi Note 12', 99, 65, 1], ['Poco X6', 119, 69, 1]
+  ],
+  'Other brands': [
+    ['Huawei', 'quote', 'quote', 2], ['Oppo', 'quote', 'quote', 2], ['Motorola', 'quote', 'quote', 1], ['Nothing Phone', 'quote', 'quote', 2],
+    ['Fairphone', 'quote', 'quote', 2], ['Sony Xperia', 'quote', 'quote', 3], ['Honor', 'quote', 'quote', 2], ['Realme', 'quote', 'quote', 1]
+  ],
+  Laptop: [['MacBook Air', 'quote', 149], ['MacBook Pro', 'quote', 169], ['Windows laptop', 'quote', 119], ['Chromebook', 'quote', 99]]
 };
-const tabs = $('tabs'), rowsEl = $('rows');
-let activeTab = 'iPhone';
+// every other phone repair: [name, price for tier 1, 2, 3, 4]
+const PHONE_REPAIRS = [
+  ['Charging port', 59, 69, 79, 89],
+  ['Back glass', 69, 89, 109, 129],
+  ['Rear camera', 69, 89, 119, 149],
+  ['Camera lens glass', 39, 45, 55, 65],
+  ['Front camera', 59, 69, 89, 99],
+  ['Speaker or earpiece', 55, 65, 75, 85],
+  ['Microphone', 55, 65, 75, 85],
+  ['Power or volume button', 55, 65, 75, 85],
+  ['Vibration motor', 49, 55, 65, 75],
+  ['Water damage: clean and check', 49, 49, 59, 59],
+  ['Software: reset, update or data transfer', 39, 39, 39, 39]
+];
+const LAPTOP_REPAIRS = [['Keyboard', 'quote'], ['Charging port', 'quote'], ['Fan and dust clean', 79], ['Storage or memory upgrade', 'quote'], ["Won't start: diagnosis", 39], ['Software: reinstall or data transfer', 59]];
+const FROM = { 'Water damage: clean and check': true };
+const groupOf = m => Object.keys(PRICES).find(k => PRICES[k].some(x => x[0] === m));
+// all repairs for one model as [name, price | 'quote']
+function repairsFor(model) {
+  const grp = groupOf(model); if (!grp) return [];
+  const [, sc, bt, tier] = PRICES[grp].find(x => x[0] === model);
+  if (grp === 'Laptop') return [['Screen', sc], ['Battery', bt], ...LAPTOP_REPAIRS];
+  return [['Screen', sc], ['Battery', bt], ...PHONE_REPAIRS.map(r => [r[0], r[tier]])];
+}
+
+const tabs = $('tabs'), rowsEl = $('rows'), modelsEl = $('models');
+let activeTab = 'iPhone', activeModel = 'iPhone 13';
 function drawTabs() {
   tabs.innerHTML = '';
-  Object.keys(PRICES).forEach(k => {
+  const keys = Object.keys(PRICES);
+  const pick = k => { activeTab = k; activeModel = PRICES[k][0][0]; drawTabs(); drawModels(); drawRows(); };
+  keys.forEach(k => {
     const b = document.createElement('button'); b.type = 'button'; b.role = 'tab'; b.textContent = k;
     b.setAttribute('aria-selected', k === activeTab); b.tabIndex = k === activeTab ? 0 : -1;
-    b.addEventListener('click', () => { activeTab = k; drawTabs(); drawRows(); });
+    b.addEventListener('click', () => pick(k));
     b.addEventListener('keydown', e => {
-      const keys = Object.keys(PRICES), i = keys.indexOf(activeTab);
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { activeTab = keys[(i + 1) % keys.length]; drawTabs(); drawRows(); tabs.children[keys.indexOf(activeTab)].focus(); }
-      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { activeTab = keys[(i + keys.length - 1) % keys.length]; drawTabs(); drawRows(); tabs.children[keys.indexOf(activeTab)].focus(); }
+      const i = keys.indexOf(activeTab), step = (e.key === 'ArrowDown' || e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowUp' || e.key === 'ArrowLeft') ? -1 : 0;
+      if (step) { e.preventDefault(); pick(keys[(i + step + keys.length) % keys.length]); tabs.children[keys.indexOf(activeTab)].focus(); }
     });
     tabs.appendChild(b);
   });
 }
+function drawModels() {
+  modelsEl.innerHTML = '';
+  PRICES[activeTab].forEach(([m]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = m; b.setAttribute('aria-pressed', m === activeModel);
+    b.addEventListener('click', () => { activeModel = m; [...modelsEl.children].forEach(c => c.setAttribute('aria-pressed', c === b)); drawRows(); });
+    modelsEl.appendChild(b);
+  });
+}
 const money = v => v === 'quote' ? 'On quote' : '€' + v;
 function drawRows() {
-  rowsEl.innerHTML = `<div class="rowh"><span>Model</span><span>Screen</span><span>Battery</span></div>`;
-  PRICES[activeTab].forEach(([m, sc, bt]) => {
-    const r = document.createElement('div'); r.className = 'row';
-    r.innerHTML = `<span class="model">${m}</span>
-      <button type="button" data-m="${m}" data-r="Screen"><span class="p">${sc === 'quote' ? '<small>from</small>€189' : money(sc)}</span></button>
-      <button type="button" data-m="${m}" data-r="Battery"><span class="p">${activeTab === 'Laptop' ? '<small>from</small>' : ''}${money(bt)}</span></button>`;
-    rowsEl.appendChild(r);
+  rowsEl.innerHTML = '';
+  repairsFor(activeModel).forEach(([name, v]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'row';
+    b.innerHTML = `<span class="model">${name}</span><span class="p">${FROM[name] && v !== 'quote' ? '<small>from</small>' : ''}${money(v)}</span>`;
+    b.addEventListener('click', () => {
+      bDevice.value = activeModel; fillRepairs(); bRepair.value = name; updateEst();
+      document.getElementById('book').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    });
+    rowsEl.appendChild(b);
   });
-  rowsEl.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-    bDevice.value = b.dataset.m; fillRepairs(); bRepair.value = b.dataset.r; updateEst();
-    document.getElementById('book').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-  }));
 }
-drawTabs(); drawRows();
+drawTabs(); drawModels(); drawRows();
 
 /* ===== BOOKING ===== */
 const bDevice = $('bDevice'), bRepair = $('bRepair');
-const allModels = Object.values(PRICES).flat();
 Object.entries(PRICES).forEach(([grp, list]) => {
   const og = document.createElement('optgroup'); og.label = grp;
   list.forEach(([m]) => { const o = document.createElement('option'); o.textContent = m; og.appendChild(o); });
@@ -776,24 +846,22 @@ Object.entries(PRICES).forEach(([grp, list]) => {
 const other = document.createElement('option'); other.textContent = 'Another device'; bDevice.appendChild(other);
 bDevice.value = 'iPhone 13';
 function fillRepairs() {
-  const keep = bRepair.value;
+  const keep = bRepair.value, list = repairsFor(bDevice.value).map(r => r[0]);
   bRepair.innerHTML = '';
-  ['Screen', 'Battery', 'Charging port', 'Something else'].forEach(r => { const o = document.createElement('option'); o.textContent = r; bRepair.appendChild(o); });
-  if (keep) bRepair.value = keep;
+  [...(list.length ? list : ['Screen', 'Battery', ...PHONE_REPAIRS.map(r => r[0])]), 'Something else'].forEach(r => { const o = document.createElement('option'); o.textContent = r; bRepair.appendChild(o); });
+  bRepair.value = keep; if (bRepair.selectedIndex < 0) bRepair.selectedIndex = 0;
 }
 fillRepairs();
 function priceFor() {
-  const m = allModels.find(x => x[0] === bDevice.value), r = bRepair.value;
-  if (!m || r === 'Something else' || r === 'Charging port') return null;
-  const v = r === 'Screen' ? m[1] : m[2];
-  return v === 'quote' ? null : v;
+  const r = repairsFor(bDevice.value).find(x => x[0] === bRepair.value);
+  return !r || r[1] === 'quote' ? null : r[1];
 }
 function updateEst() {
   const v = priceFor();
-  $('est').textContent = v ? '€' + v : 'On quote';
+  $('est').textContent = v ? (FROM[bRepair.value] ? 'From €' : '€') + v : 'On quote';
   $('estNote').textContent = v ? `${bDevice.value}, ${bRepair.value.toLowerCase()}. Paid when the repair is done.` : 'We look first and give you a fixed price before we start.';
 }
-bDevice.addEventListener('change', updateEst); bRepair.addEventListener('change', updateEst); updateEst();
+bDevice.addEventListener('change', () => { fillRepairs(); updateEst(); }); bRepair.addEventListener('change', updateEst); updateEst();
 
 // days + slots
 const WEEKDAY_SLOTS = ['18:00', '19:15', '20:30'], SAT_SLOTS = ['9:00', '10:15', '11:30', '13:30', '14:45', '16:00'];
@@ -904,9 +972,9 @@ try {
   const PAV = .18, FRONT = -2.3;
   const road = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M('#45407F')); road.rotation.x = -Math.PI/2; road.receiveShadow = true; scene.add(road);
   block(400, PAV, 30, M('#6A63A8'), 0, PAV/2, -1.5 - 15);
-  block(400, PAV, 60, M('#6A63A8'), 0, PAV/2, 3.4 + 30);
+  block(400, PAV, 60, M('#6A63A8'), 0, PAV/2, 4.4 + 30);
   const marks = new THREE.Group(); scene.add(marks);
-  for (let x = -60; x < 100; x += 2.4) flat(1.1, .02, .12, M('#E9EAF6'), x, .02, 1.9, marks);
+  for (let x = -60; x < 100; x += 2.4) flat(1.1, .02, .12, M('#E9EAF6'), x, .02, 2.55, marks);
 
   /* the street: five step-gabled houses and two lamps per 16 m, repeated so it can scroll forever */
   const PERIOD = 16, street = new THREE.Group(); scene.add(street);
@@ -928,7 +996,7 @@ try {
   const signMat = new THREE.MeshStandardMaterial({ roughness: .7, map: label(580, 92, g => { g.fillStyle = '#20194A'; g.fillRect(0, 0, 580, 92); g.fillStyle = '#fff'; g.font = '800 54px Archivo, Arial'; g.fillText('Phone repair', 290, 50); }) });
   const shutterGeo = new THREE.BoxGeometry(2.8, 1.4, .08); shutterGeo.translate(0, -.7, 0);
   let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  for (let rep = -4; rep < 6; rep++) {
+  for (let rep = -2; rep < 5; rep++) {
     let hx = rep * PERIOD; seed = 11;
     plots.forEach(([w, h], i) => {
       const cx = hx + w/2; hx += w;
@@ -956,63 +1024,106 @@ try {
     const cone = new THREE.Mesh(new THREE.ConeGeometry(2, 6, 4), towerMat); cone.position.set(x, h + 3, -34); cone.rotation.y = Math.PI/4; scene.add(cone);
   });
 
-  /* the van: nose at local x = 0, tail at 5; the side door faces the camera */
-  const LEN = 5, van = new THREE.Group(); scene.add(van); van.position.set(-LEN/2, 0, .3);
-  const amber = M('#FFB238', { roughness: .45 }), glass = M('#2B2560', { roughness: .2, metalness: .4 }), dark = M('#1A1540', { roughness: .9 });
-  const prof = new THREE.Shape();
-  prof.moveTo(0, .4); prof.lineTo(0, 1.2); prof.lineTo(.55, 1.5); prof.lineTo(1.3, 2.35); prof.lineTo(LEN - .15, 2.35);
-  prof.quadraticCurveTo(LEN, 2.35, LEN, 2.2); prof.lineTo(LEN, .4);
-  const D0 = 2.05, D1 = 3.45, DY0 = .62, DY1 = 2.06, hole = new THREE.Path();
+  /* reflections for paint, glass and rims: a small painted dusk panorama */
+  const envTex = label(512, 256, g => {
+    const gr = g.createLinearGradient(0, 0, 0, 256);
+    gr.addColorStop(0, '#1B1A55'); gr.addColorStop(.42, '#8E78B8'); gr.addColorStop(.5, '#FFC39A'); gr.addColorStop(.56, '#3A3478'); gr.addColorStop(1, '#141033');
+    g.fillStyle = gr; g.fillRect(0, 0, 512, 256);
+    g.fillStyle = '#FFE9BF'; [40, 150, 265, 330, 450].forEach((x, i) => g.fillRect(x, 108 + (i % 2) * 8, 26, 9));
+    g.fillStyle = '#FFFFFF'; g.fillRect(200, 30, 60, 10);
+  });
+  envTex.mapping = THREE.EquirectangularReflectionMapping;
+  const pmrem = new THREE.PMREMGenerator(renderer), env = pmrem.fromEquirectangular(envTex).texture; pmrem.dispose();
+
+  /* the van: nose at local x = 0, tail at LEN; the sliding door faces the camera */
+  const LEN = 5.2, BV = .09, HALF = .9 + BV, WR = .42;
+  const van = new THREE.Group(); scene.add(van);
+  const tilt = new THREE.Group(); tilt.position.set(LEN/2, .5, 0); van.add(tilt);
+  const shell = new THREE.Group(); shell.position.set(-LEN/2, -.5, 0); tilt.add(shell);
+  const paint = new THREE.MeshPhysicalMaterial({ color: '#FFAE2B', roughness: .38, metalness: .15, clearcoat: 1, clearcoatRoughness: .12, envMap: env, envMapIntensity: .9 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: '#0D0B26', roughness: .06, metalness: .85, envMap: env, envMapIntensity: 1.3, side: THREE.DoubleSide });
+  const trim = M('#15122F', { roughness: .55 }), dark = M('#16132E', { roughness: .9 });
+  const chrome = new THREE.MeshStandardMaterial({ color: '#D9DAE8', roughness: .22, metalness: .95, envMap: env });
+  const AX = [1.02, 4.18], prof = new THREE.Shape();
+  prof.moveTo(.16, .44); prof.quadraticCurveTo(.02, .5, .03, 1.02); prof.quadraticCurveTo(.06, 1.38, .5, 1.45);
+  prof.lineTo(1.2, 2.2); prof.quadraticCurveTo(1.36, 2.36, 1.7, 2.36); prof.lineTo(LEN - .3, 2.36);
+  prof.quadraticCurveTo(LEN - .05, 2.36, LEN - .05, 2.1); prof.lineTo(LEN - .05, .62); prof.quadraticCurveTo(LEN - .05, .44, LEN - .22, .44);
+  prof.lineTo(AX[1] + .62, .44); prof.absarc(AX[1], .44, .62, 0, Math.PI, false);
+  prof.lineTo(AX[0] + .62, .44); prof.absarc(AX[0], .44, .62, 0, Math.PI, false); prof.closePath();
+  const D0 = 2.08, D1 = 3.42, DY0 = .68, DY1 = 2.0, hole = new THREE.Path();
   hole.moveTo(D0, DY0); hole.lineTo(D0, DY1); hole.lineTo(D1, DY1); hole.lineTo(D1, DY0); hole.closePath(); prof.holes.push(hole);
-  const bodyGeo = new THREE.ExtrudeGeometry(prof, { depth: 1.8, bevelEnabled: true, bevelSize: .05, bevelThickness: .05, bevelSegments: 2 }); bodyGeo.translate(0, 0, -.9);
-  const body = new THREE.Mesh(bodyGeo, amber); body.castShadow = body.receiveShadow = true; van.add(body);
-  block(D1 - D0 + .2, DY1 - DY0 + .2, .04, amber, (D0 + D1)/2, (DY0 + DY1)/2, -.94, van);           // closes the far side
-  const shield = block(1.0, .04, 1.66, glass, .895, 1.955, 0, van); shield.rotation.z = Math.atan2(.85, .75);
-  [1, -1].forEach(s => block(.6, .5, .04, glass, 1.62, 1.9, s * .96, van));
-  block(D0 - .02, .14, 1.94, M('#E8930C', { roughness: .5 }), (D0 - .02)/2, .52, 0, van);
-  block(LEN - D1, .14, 1.94, M('#E8930C', { roughness: .5 }), (LEN + D1)/2, .52, 0, van);
-  block(.12, .22, 1.92, dark, 0, .5, 0, van);
-  [1, -1].forEach(s => { flat(.06, .16, .34, glow('#FFF4CF', '#FFF4CF', 2.2), -.04, 1.0, s * .6, van); flat(.06, .34, .14, glow('#C0283A', '#FF4D4D', 1.6), LEN + .03, 1.2, s * .78, van); });
+  const bodyGeo = new THREE.ExtrudeGeometry(prof, { depth: 1.8, curveSegments: 20, bevelEnabled: true, bevelSize: BV, bevelThickness: BV, bevelSegments: 6 }); bodyGeo.translate(0, 0, -.9);
+  const body = new THREE.Mesh(bodyGeo, paint); body.castShadow = body.receiveShadow = true; shell.add(body);
+  const cx = (D0 + D1)/2, cy = (DY0 + DY1)/2, dw = D1 - D0, dh = DY1 - DY0;
+  block(dw + .3, dh + .3, .04, paint, cx, cy, -HALF + .03, shell);                                   // closes the far side
+  // glass: windshield, wraparound cab windows, rear window
+  const ws = block(.98, .03, 1.72, glass, .85 - .078, 1.825 + .072, 0, shell); ws.rotation.z = Math.atan2(.75, .7); ws.castShadow = false;
+  const sw = new THREE.Shape(); sw.moveTo(.72, 1.5); sw.lineTo(1.3, 2.14); sw.quadraticCurveTo(1.36, 2.2, 1.46, 2.2); sw.lineTo(1.86, 2.2); sw.quadraticCurveTo(1.94, 2.2, 1.94, 2.12); sw.lineTo(1.94, 1.58); sw.quadraticCurveTo(1.94, 1.5, 1.86, 1.5); sw.closePath();
+  const swGeo = new THREE.ShapeGeometry(sw, 8);
+  [1, -1].forEach(s => { const m = new THREE.Mesh(swGeo, glass); m.position.z = s * (HALF + .006); shell.add(m); });
+  flat(.03, .5, 1.3, glass, LEN - .05 + BV, 1.85, 0, shell);
+  // nose: light bar, headlights, grille, bumper; tail: light strips, bumper
+  const NX = -BV + .02, TX = LEN - .05 + BV;
+  const ledMat = glow('#FFFFFF', '#F4F8FF', 2.4), tailMat = glow('#B01E30', '#FF3344', 1.2), blinkMat = glow('#7A4A00', '#FFA51E');
+  flat(.05, .035, 1.5, ledMat, NX, 1.16, 0, shell);
+  [1, -1].forEach(s => {
+    flat(.06, .13, .4, ledMat, NX - .005, 1.02, s * .62, shell);
+    flat(.05, .7, .07, tailMat, TX, 1.55, s * (HALF - .12), shell);
+    flat(.14, .24, .3, trim, .98, 1.56, s * (HALF + .13), shell);                                    // mirrors
+  });
+  flat(.05, .05, 1.5, tailMat, TX, 1.2, 0, shell);
+  [[NX, 1.02], [TX, 1.12]].forEach(([x, y]) => flat(.06, .1, .12, blinkMat, x, y, -(HALF - .12), shell));
+  flat(.08, .26, 1.3, trim, NX + .02, .72, 0, shell);
+  block(.2, .22, 2 * HALF + .02, trim, .1, .47, 0, shell); block(.2, .22, 2 * HALF + .02, trim, LEN - .12, .5, 0, shell);
+  [1, -1].forEach(s => flat(AX[1] - AX[0] - 1.26, .1, .03, trim, (AX[0] + AX[1])/2, .4, s * (HALF - .02), shell));  // sills
+  flat(.012, 1.5, .012, trim, 2.0, 1.35, HALF + .004, shell); flat(.14, .035, .03, trim, 1.86, 1.36, HALF + .012, shell); // cab door seam, handle
   const beamMat = new THREE.MeshBasicMaterial({ color: '#FFE6A8', transparent: true, opacity: .16, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, fog: false });
-  const beam = new THREE.Mesh(new THREE.ConeGeometry(1.1, 5.2, 24, 1, true), beamMat); beam.rotation.z = -Math.PI/2; beam.position.set(-2.6, .9, 0); van.add(beam);
-  const head = new THREE.SpotLight('#FFE6A8', 60, 22, .55, .7, 1.4); head.position.set(-.2, 1.1, 0); head.target.position.set(-9, 0, 0); van.add(head, head.target);
+  const beam = new THREE.Mesh(new THREE.ConeGeometry(1.1, 5.2, 24, 1, true), beamMat); beam.rotation.z = -Math.PI/2; beam.position.set(-2.7, .9, 0); shell.add(beam);
+  const head = new THREE.SpotLight('#FFE6A8', 60, 22, .55, .7, 1.4); head.position.set(-.3, 1.05, 0); head.target.position.set(-9, 0, 0); shell.add(head, head.target);
 
   // the workshop inside
-  const cx = (D0 + D1)/2, lining = M('#3A3380'), strip = glow('#E9FBFF', '#CFF6FF');
-  flat(D1 - D0, .04, 1.78, M('#2A2466'), cx, DY0 + .02, 0, van);
-  flat(D1 - D0, .04, 1.78, lining, cx, DY1 - .02, 0, van);
-  flat(.04, DY1 - DY0, 1.78, lining, D0 + .02, (DY0 + DY1)/2, 0, van);
-  flat(.04, DY1 - DY0, 1.78, lining, D1 - .02, (DY0 + DY1)/2, 0, van);
-  flat(D1 - D0, DY1 - DY0, .04, M('#B9BBD8'), cx, (DY0 + DY1)/2, -.86, van);                        // pegboard
-  flat(1.1, .04, .1, strip, cx, DY1 - .06, -.3, van);
-  flat(D1 - D0 - .08, .46, .5, M('#4A4475'), cx, DY0 + .27, -.58, van);                                // cabinet
-  flat(D1 - D0 - .04, .05, .58, M('#CFCDE0', { roughness: .5 }), cx, DY0 + .53, -.55, van);            // bench top
-  [[-.5, '#FFB238', .34], [-.36, '#8E3B46', .26], [-.22, '#2E8C8A', .3], [.3, '#20194A', .22], [.44, '#FFB238', .3]].forEach(([dx, c, h]) => flat(.06, h, .03, M(c), cx + dx, DY1 - .3 - h/2, -.83, van));
-  const benchY = DY0 + .555;
-  const phone = new THREE.Group(); phone.position.set(cx - .3, benchY + .21, -.62); phone.rotation.x = -.28; van.add(phone);
+  const lining = M('#3A3380'), strip = glow('#E9FBFF', '#CFF6FF');
+  flat(dw + .2, .04, 1.84, M('#2A2466'), cx, DY0 - .05, 0, shell);
+  flat(dw + .2, .04, 1.84, lining, cx, DY1 + .05, 0, shell);
+  flat(.04, dh + .2, 1.84, lining, D0 - .05, cy, 0, shell);
+  flat(.04, dh + .2, 1.84, lining, D1 + .05, cy, 0, shell);
+  flat(dw + .2, dh + .2, .04, M('#B9BBD8'), cx, cy, -.88, shell);                                    // pegboard
+  flat(1.1, .04, .1, strip, cx, DY1 - .03, -.3, shell);
+  flat(dw, .46, .5, M('#4A4475'), cx, DY0 + .2, -.6, shell);                                         // cabinet
+  flat(dw + .06, .05, .6, M('#CFCDE0', { roughness: .5 }), cx, DY0 + .46, -.57, shell);              // bench top
+  [[-.5, '#FFB238', .3], [-.38, '#8E3B46', .24], [-.26, '#2E8C8A', .28], [.3, '#20194A', .2], [.42, '#FFB238', .28]].forEach(([dx, c, h]) => flat(.05, h, .03, M(c), cx + dx, DY1 - .22 - h/2, -.85, shell));
+  const benchY = DY0 + .485;
+  const phone = new THREE.Group(); phone.position.set(cx - .3, benchY + .21, -.66); phone.rotation.x = -.28; shell.add(phone);
   flat(.22, .44, .03, dark, 0, 0, 0, phone);
   const screenTex = label(200, 400, g => { const gr = g.createLinearGradient(0, 0, 200, 400); gr.addColorStop(0, '#2C2366'); gr.addColorStop(.55, '#2E8C8A'); gr.addColorStop(1, '#FFB238'); g.fillStyle = gr; g.fillRect(0, 0, 200, 400); g.fillStyle = '#fff'; g.font = '800 64px Archivo, Arial'; g.fillText('19:12', 100, 110); });
   const screen = new THREE.Mesh(new THREE.PlaneGeometry(.19, .41), new THREE.MeshBasicMaterial({ map: screenTex })); screen.position.z = .017; phone.add(screen);
-  flat(.5, .03, .34, M('#B9B6CC', { roughness: .4, metalness: .4 }), cx + .34, benchY + .015, -.5, van); // laptop
-  const lid = flat(.5, .33, .02, glow('#1E1A48', '#9FE9F2', .9), cx + .34, benchY + .19, -.7, van); lid.rotation.x = -.2;
-  const shopLight = new THREE.PointLight('#DDF8FF', 0, 6, 1.5); shopLight.position.set(cx, DY1 - .25, -.1); van.add(shopLight);
-  const spill = new THREE.PointLight('#DDF3FF', 0, 7, 1.6); spill.position.set(cx, 1.2, 1.9); van.add(spill);
+  flat(.5, .03, .34, chrome, cx + .32, benchY + .015, -.52, shell);                                  // laptop
+  const lid = flat(.5, .33, .02, glow('#1E1A48', '#9FE9F2', .9), cx + .32, benchY + .19, -.72, shell); lid.rotation.x = -.2;
+  const shopLight = new THREE.PointLight('#DDF8FF', 0, 6, 1.5); shopLight.position.set(cx, DY1 - .25, -.1); shell.add(shopLight);
+  const spill = new THREE.PointLight('#DDF3FF', 0, 7, 1.6); spill.position.set(cx, 1.2, 1.9); shell.add(spill);
 
   // sliding door with the logo
-  const door = new THREE.Group(); van.add(door); door.position.set(cx, (DY0 + DY1)/2, 1.0);
-  block(D1 - D0 + .06, DY1 - DY0 + .06, .06, amber, 0, 0, 0, door);
-  const logo = new THREE.Mesh(new THREE.PlaneGeometry(1.2, .6), new THREE.MeshStandardMaterial({ roughness: .45, map: label(480, 240, g => { g.fillStyle = '#FFB238'; g.fillRect(0, 0, 480, 240); g.fillStyle = '#20194A'; g.font = '900 100px Archivo, Arial'; g.fillText('Fix on', 240, 86); g.font = '400 54px Archivo, Arial'; g.fillText('Wheels, Ghent', 240, 176); }) }));
-  logo.position.set(0, .1, .035); door.add(logo);
-  flat(.05, .22, .04, dark, -.52, -.1, .04, door);
+  const door = new THREE.Group(); shell.add(door);
+  const dp = new THREE.Shape(), rw = dw/2 + .09, rh = dh/2 + .09, rr = .09;
+  dp.moveTo(-rw + rr, -rh); dp.lineTo(rw - rr, -rh); dp.quadraticCurveTo(rw, -rh, rw, -rh + rr); dp.lineTo(rw, rh - rr); dp.quadraticCurveTo(rw, rh, rw - rr, rh);
+  dp.lineTo(-rw + rr, rh); dp.quadraticCurveTo(-rw, rh, -rw, rh - rr); dp.lineTo(-rw, -rh + rr); dp.quadraticCurveTo(-rw, -rh, -rw + rr, -rh);
+  const doorMesh = new THREE.Mesh(new THREE.ExtrudeGeometry(dp, { depth: .03, bevelEnabled: true, bevelSize: .015, bevelThickness: .015, bevelSegments: 3 }), paint); doorMesh.castShadow = true; door.add(doorMesh);
+  const logo = new THREE.Mesh(new THREE.PlaneGeometry(1.14, .57), new THREE.MeshStandardMaterial({ roughness: .5, transparent: true, map: label(480, 240, g => { g.fillStyle = '#20194A'; g.font = '900 100px Archivo, Arial'; g.fillText('Fix on', 240, 86); g.font = '400 54px Archivo, Arial'; g.fillText('Wheels, Ghent', 240, 176); }) }));
+  logo.position.set(.04, .12, .047); door.add(logo);
+  flat(.035, .16, .03, trim, -rw + .12, -.08, .055, door);
 
-  const hub = M('#CFCDE0', { roughness: .4, metalness: .3 });
-  const wheels = [[.95, 1], [.95, -1], [4.05, 1], [4.05, -1]].map(([x, s]) => {
-    const g = new THREE.Group(); g.position.set(x, .42, s * .86); van.add(g);
-    const t = new THREE.Mesh(new THREE.CylinderGeometry(.42, .42, .28, 28), dark); t.rotation.x = Math.PI/2; t.castShadow = true; g.add(t);
-    const c = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, .3, 18), hub); c.rotation.x = Math.PI/2; g.add(c);
-    flat(.38, .07, .31, dark, 0, 0, 0, g); flat(.07, .38, .31, dark, 0, 0, 0, g);
-    return g;
-  });
+  // wheels: rounded tyre, alloy rim, five spokes
+  const tyreGeo = new THREE.LatheGeometry([[.25, -.15], [.37, -.15], [WR, -.1], [WR, .1], [.37, .15], [.25, .15]].map(([x, y]) => new THREE.Vector2(x, y)), 40);
+  const wheels = AX.flatMap(x => [1, -1].map(s => {
+    const g = new THREE.Group(); g.position.set(x, WR, s * .8); van.add(g);
+    const spin = new THREE.Group(); spin.rotation.x = s * Math.PI/2; g.add(spin);
+    const t = new THREE.Mesh(tyreGeo, dark); t.castShadow = true; spin.add(t);
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(.27, .27, .26, 32), chrome); spin.add(rim);
+    const face = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .28, 24), dark); spin.add(face);
+    for (let i = 0; i < 5; i++) { const sp = flat(.045, .29, .25, chrome, 0, 0, 0, spin); sp.rotation.y = i * Math.PI * 2 / 5; sp.geometry.translate(0, 0, .12); }
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, .3, 16), paint); spin.add(cap);
+    return { g, spin, s };
+  }));
 
   /* light */
   const hemi = new THREE.HemisphereLight('#C9CFFF', '#3A2E6E', 1); scene.add(hemi);
@@ -1022,7 +1133,7 @@ try {
   const dusk = C('#FFC89A'), moon = C('#8FA0FF'), hemiDay = C('#C9CFFF'), hemiNight = C('#5A5FC0');
 
   /* state */
-  let w = 0, h = 0, p = 0, speed = reduce ? 0 : 1, offset = 0, last = 0, px = 0, py = 0, mx = 0, my = 0, visible = true, dirty = true;
+  let w = 0, h = 0, p = 0, ps = 0, speed = reduce ? 0 : 1, offset = 0, last = 0, px = 0, py = 0, mx = 0, my = 0, visible = true, dirty = true;
   const readScroll = () => { const r = hero.getBoundingClientRect(); const np = clamp(-r.top / Math.max(1, r.height - innerHeight)); if (np !== p) { p = np; dirty = true; } };
   addEventListener('scroll', readScroll, { passive: true });
   hero.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' && !reduce) { px = e.clientX / innerWidth - .5; py = e.clientY / innerHeight - .5; } });
@@ -1041,8 +1152,9 @@ try {
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hero);
 
   const far = new THREE.Vector3(), fwd = new THREE.Vector3();
+  let want = 1;
   function draw(now) {
-    const night = ss(.04, .62, p), parked = ss(.3, .5, p), close = ss(.62, .9, p), open = ss(.42, .58, p);
+    const p = ps, night = ss(.04, .62, p), parked = ss(.26, .52, p), close = ss(.6, .92, p), open = ss(.42, .6, p), pull = ss(.12, .36, p);
     // sky, fog, light
     cTop.lerpColors(sky.top[0], sky.top[1], night); cMid.lerpColors(sky.mid[0], sky.mid[1], night); cHor.lerpColors(sky.hor[0], sky.hor[1], night);
     scene.fog.color.copy(cHor); stars.material.opacity = ss(.45, 1, night);
@@ -1056,19 +1168,28 @@ try {
     const lampOn = ss(.28, .4, night); bulbMat.emissiveIntensity = 2.6 * lampOn; poolMat.opacity = .16 * lampOn;
     street.position.x = offset % PERIOD; marks.position.x = offset % 2.4;
     // van
-    wheels.forEach(g => { g.rotation.z = offset / .42; });
-    van.position.y = Math.sin(now / 85) * .012 * speed + Math.sin(now / 230) * .008 * speed;
-    beamMat.opacity = .05 + .12 * speed; head.intensity = lerp(25, 60, night);
-    door.position.x = cx + open * 1.5;
+    // van: rolls, pulls over to the kerb with its indicator on, dips its nose as it brakes
+    wheels.forEach(o => { o.spin.rotation.y = o.s * offset / WR; });
+    const steer = -Math.sin(pull * Math.PI) * .11;
+    van.position.set(-LEN/2, 0, lerp(1.15, .3, pull)); van.rotation.y = steer;
+    wheels[0].g.rotation.y = wheels[1].g.rotation.y = steer * 1.6;
+    const braking = clamp((speed - want) * 2.2);
+    tilt.position.y = .5 + (Math.sin(now / 95) * .009 + Math.sin(now / 240) * .007) * speed;
+    tilt.rotation.z = braking * .028; tilt.rotation.x = steer * .25;
+    tailMat.emissiveIntensity = 1.1 + braking * 3.2;
+    blinkMat.emissiveIntensity = pull > .02 && pull < .98 && now % 760 < 400 ? 3.2 : 0;
+    beamMat.opacity = .04 + .12 * speed; head.intensity = lerp(25, 60, night); paint.envMapIntensity = lerp(.95, .55, night);
+    door.position.set(cx + ss(.22, 1, open) * 1.52, cy, HALF + .012 + ss(0, .25, open) * .07);
     shopLight.intensity = open * 3.2; spill.intensity = open * lerp(1, 3, night); strip.emissiveIntensity = open * 2.2;
     // camera: front three-quarter while driving, side-on when parked, then up to the open door
     mx += (px - mx) * .08; my += (py - my) * .08;
     const fit = clamp(1.25 / camera.aspect, 1, 2.3), fitClose = clamp(.95 / camera.aspect, 1, 2.1);
-    const th = lerp(lerp(1.02, .4, parked), .24, close) + mx * .16;
+    const th = lerp(lerp(1.0, .42, parked), .24, close) + mx * .16;
     const r = lerp(lerp(12.5 * fit, 11.5 * fit, parked), 7.6 * fitClose, close);
     const ty = lerp(1.15, 1.32, close), tx = lerp(0, cx - LEN/2, close);
-    camera.position.set(tx - Math.sin(th) * r, lerp(lerp(2.0, 2.5, parked), 1.75, close) - my * .5, .3 + Math.cos(th) * r);
-    camera.lookAt(tx, ty, .3);
+    const tz = lerp(.75, .3, pull);
+    camera.position.set(tx - Math.sin(th) * r, lerp(lerp(1.9, 2.5, parked), 1.75, close) - my * .5, tz + Math.cos(th) * r);
+    camera.lookAt(tx, ty, tz);
     sun.target.position.set(0, 0, 0);
     // sky gradient, horizon at the right height on screen
     camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
@@ -1078,8 +1199,8 @@ try {
     skyG.fillStyle = g; skyG.fillRect(0, 0, 4, 256); skyT.needsUpdate = true;
     renderer.render(scene, camera);
     // text
-    const vis = [1 - ss(.2, .3, p), ss(.36, .44, p) * (1 - ss(.6, .68, p)), ss(.74, .84, p)];
-    chapters.forEach((c, i) => { c.style.opacity = vis[i]; c.style.transform = `translateY(${(1 - vis[i]) * (i === 0 ? -18 : 18)}px)`; c.inert = vis[i] < .5; });
+    const vis = [1 - ss(.16, .28, p), ss(.36, .46, p) * (1 - ss(.58, .68, p)), ss(.76, .88, p)];
+    chapters.forEach((c, i) => { c.style.opacity = vis[i]; c.style.transform = `translate3d(0,${((1 - vis[i]) * (i === 0 ? -24 : 24)).toFixed(2)}px,0)`; c.inert = vis[i] < .5; });
     const leg = p < .33 ? 0 : p < .7 ? 1 : 2;
     legs.forEach((b, i) => { if (i === leg) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
     cue.style.opacity = p > .9 ? 0 : 1; hero.style.setProperty('--dim', close);
@@ -1089,10 +1210,11 @@ try {
     requestAnimationFrame(frame);
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     if (!visible || !w) return;
-    const want = reduce ? 0 : 1 - ss(.1, .34, p);
+    ps = reduce ? p : ps + (p - ps) * (1 - Math.exp(-dt * 6)); if (Math.abs(p - ps) < .0002) ps = p;
+    want = reduce ? 0 : 1 - ss(.1, .36, ps);
     speed += (want - speed) * Math.min(1, dt * 3.5); if (Math.abs(want - speed) < .001) speed = want;
     offset += speed * 7.5 * dt;
-    if (speed > 0 || dirty || Math.abs(px - mx) > .001 || Math.abs(py - my) > .001) { dirty = false; draw(now); }
+    if (speed > 0 || dirty || ps !== p || Math.abs(px - mx) > .001 || Math.abs(py - my) > .001) { dirty = false; draw(now); }
   }
 
   hero.classList.add('live');
