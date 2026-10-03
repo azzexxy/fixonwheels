@@ -71,24 +71,30 @@ section{padding:clamp(72px,10vw,128px) 0}
 .top.solid .nav .btn{color:#20194A}
 @media (max-width:760px){.nav a:not(.btn){display:none}}
 
-/* HERO */
-.hero{position:relative;min-height:100svh;padding:0;color:#fff;background:#17133D;overflow:hidden;display:flex;flex-direction:column}
+/* HERO: a clean landing with a 3D street you can turn */
+.hero{position:relative;min-height:100svh;padding:0;color:#fff;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(var(--sky1,#4B4F9E),var(--sky2,#9C7AA8) 62%,var(--sky3,#F2A16E))}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,19,61,.62),rgba(23,19,61,.28) 42%,transparent 68%);pointer-events:none}
 .hero .wrap{width:100%}
-.stage{position:relative;flex:1;display:flex;flex-direction:column;min-height:560px}
-.scene{position:absolute;inset:0;width:100%;height:100%;display:block}
-.hero-copy{position:relative;z-index:2;max-width:1180px;padding-top:calc(env(safe-area-inset-top,0px) + 108px);padding-bottom:40px}
-.hero h1{font-size:clamp(2.6rem,6.2vw,5.4rem);line-height:.95;letter-spacing:-.025em}
-.hero h1 span{display:block}
-.hero h1 .l2{font-stretch:62%;font-weight:300;letter-spacing:0}
-.hero .lede{color:#fff;max-width:46ch;text-shadow:0 1px 12px rgba(23,19,61,.6)}
+.stars{position:absolute;top:0;left:0;width:2px;height:2px;border-radius:50%;opacity:0;pointer-events:none}
+.hero-grid{position:relative;flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);align-items:center;gap:16px;padding-top:calc(env(safe-area-inset-top,0px) + 84px);padding-bottom:20px}
+.hero-copy{position:relative;z-index:2}
+.hero h1{font-size:clamp(2.2rem,4.15vw,3.7rem);line-height:.95;letter-spacing:-.025em}
+.hero h1 span{display:block;white-space:nowrap}
+.hero h1 .l2{font-stretch:62%;font-weight:300;letter-spacing:0;font-size:1.28em}
+.hero .lede{color:#fff;max-width:36ch}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
 .hero-actions .btn-ghost{color:#fff}
-.clockbar{position:relative;z-index:3;background:#17133D;padding:22px 0 26px;border-top:1px solid rgba(255,255,255,.08)}
+.diorama{position:relative;align-self:stretch;min-height:440px}
+.diorama::before{content:"";position:absolute;left:8%;right:-4%;bottom:6%;height:16%;border-radius:50%;background:radial-gradient(closest-side,rgba(16,13,46,.55),transparent);filter:blur(14px)}
+.diorama canvas{position:absolute;left:-14%;top:-8%;width:116%;height:116%;display:block;cursor:grab;touch-action:pan-y;outline:none}
+.diorama canvas.dragging{cursor:grabbing}
+.diorama .hint{position:absolute;right:0;bottom:0;margin:0}
+.diorama.flat canvas,.diorama.flat .hint{display:none}
+.clockbar{position:relative;z-index:3;background:rgba(23,19,61,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:18px 0 20px;border-top:1px solid rgba(255,255,255,.1)}
 .clockbar .wrap{display:grid;grid-template-columns:auto 1fr;gap:12px 40px;align-items:center}
-@media (max-width:760px){.clockbar .wrap{grid-template-columns:1fr}}
-.clock{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap}
-.readout{font-stretch:125%;font-weight:900;font-size:clamp(3rem,8vw,5.5rem);line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.03em;text-shadow:0 2px 24px rgba(0,0,0,.25)}
-.status{max-width:30ch;font-size:1rem;padding-bottom:4px;min-height:3.1em;display:flex;align-items:flex-end;color:rgba(255,255,255,.9)}
+.clock{display:flex;align-items:flex-end;gap:20px}
+.readout{font-stretch:125%;font-weight:900;font-size:clamp(2.6rem,6vw,4.2rem);line-height:.85;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.status{max-width:30ch;font-size:.98rem;min-height:3.1em;display:flex;align-items:flex-end;color:rgba(255,255,255,.9)}
 .track{position:relative}
 .track input{width:100%;appearance:none;-webkit-appearance:none;background:transparent;height:44px;cursor:grab;margin:0}
 .track input:active{cursor:grabbing}
@@ -99,13 +105,17 @@ section{padding:clamp(72px,10vw,128px) 0}
 .ticks{display:flex;justify-content:space-between;font-size:.8rem;color:rgba(255,255,255,.75);font-variant-numeric:tabular-nums;padding:0 4px}
 .ticks b{color:#fff;font-weight:700}
 .hint{font-size:.85rem;color:rgba(255,255,255,.7);margin-top:6px}
-@media (max-width:760px){
+@media (max-width:860px){
   .hero{min-height:auto}
-  .stage{min-height:0}
-  .scene{position:relative;inset:auto;height:auto;aspect-ratio:16/10;margin-top:20px;order:2}
-  .hero h1{font-size:clamp(2.2rem,10vw,3rem)}
+  .hero::before{background:linear-gradient(rgba(23,19,61,.6),transparent 60%)}
+  .hero-grid{grid-template-columns:1fr;gap:0;padding-bottom:0}
+  .hero h1{font-size:clamp(1.9rem,8.6vw,3.2rem)}
+  .hero h1 span{white-space:normal}
   .hero h1 span:first-child{font-stretch:100%}
-  .hero-copy{padding-top:calc(env(safe-area-inset-top,0px) + 92px);padding-bottom:0}
+  .diorama{min-height:min(78vw,400px)}
+  .diorama canvas{left:-4%;top:0;width:108%;height:100%}
+  .diorama .hint{right:auto;left:0;bottom:8px}
+  .clockbar .wrap{grid-template-columns:1fr}
 }
 
 /* REPAIR DEMO */
@@ -126,10 +136,13 @@ section{padding:clamp(72px,10vw,128px) 0}
 .timer small{font-size:.9rem;font-weight:500;font-stretch:100%;color:var(--ink-soft);margin-left:6px}
 .phone-stage{position:relative;display:grid;place-items:center;padding:28px 0}
 .phone-stage::before{content:"";position:absolute;inset:6% 10%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--amber) 35%,transparent),transparent);filter:blur(10px)}
-.phone{position:relative;width:min(300px,78vw);cursor:crosshair;touch-action:manipulation}
-.phone svg{display:block;width:100%;height:auto;filter:drop-shadow(0 30px 40px rgba(32,25,74,.28))}
-.rec{position:absolute;top:18px;left:-6px;display:flex;align-items:center;gap:8px;background:#20194A;color:#fff;font-size:.8rem;font-weight:600;padding:6px 12px;border-radius:999px;opacity:0;transform:translateY(6px);transition:all .3s ease}
-.rec.live{opacity:1;transform:none}
+.phone-stage{perspective:1100px}
+.phone{position:relative;width:min(300px,78vw);cursor:crosshair;touch-action:manipulation;transform-style:preserve-3d;transform:rotateY(var(--ry,-16deg)) rotateX(var(--rx,7deg));transition:transform .2s ease-out}
+.phone::before,.phone::after{content:"";position:absolute;inset:0;border-radius:15.4%/7.7%;background:#120E33;transform:translateZ(-7px)}
+.phone::after{transform:translateZ(-14px);box-shadow:0 30px 50px rgba(32,25,74,.35)}
+.phone svg{position:relative;display:block;width:100%;height:auto}
+.rec{position:absolute;top:18px;left:-6px;display:flex;align-items:center;gap:8px;background:#20194A;color:#fff;font-size:.8rem;font-weight:600;padding:6px 12px;border-radius:999px;opacity:0;transform:translateZ(36px) translateY(6px);transition:all .3s ease}
+.rec.live{opacity:1;transform:translateZ(36px)}
 .rec i{width:9px;height:9px;border-radius:50%;background:#FF4D4D;animation:blink 1s steps(2) infinite}
 @keyframes blink{50%{opacity:.2}}
 .tap-hint{text-align:center;font-size:.9rem;color:var(--ink-soft);margin-top:14px;min-height:1.4em}
@@ -284,73 +297,20 @@ footer{background:var(--ink);color:rgba(255,255,255,.8);padding:56px 0 calc(40px
 <main>
 <!-- HERO -->
 <section class="hero" aria-labelledby="hero-title">
-  <div class="stage">
-  <svg class="scene" id="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-    <defs>
-      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-        <stop id="skyTop" offset="0" stop-color="#4B4F9E"/>
-        <stop id="skyMid" offset=".62" stop-color="#9C7AA8"/>
-        <stop id="skyBot" offset="1" stop-color="#F2A16E"/>
-      </linearGradient>
-      <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#FFE6A8" stop-opacity=".75"/>
-        <stop offset="1" stop-color="#FFE6A8" stop-opacity="0"/>
-      </linearGradient>
-      <radialGradient id="lampglow"><stop offset="0" stop-color="#FFD27A" stop-opacity=".85"/><stop offset="1" stop-color="#FFD27A" stop-opacity="0"/></radialGradient>
-      <radialGradient id="workglow"><stop offset="0" stop-color="#BFF5FF" stop-opacity=".9"/><stop offset="1" stop-color="#BFF5FF" stop-opacity="0"/></radialGradient>
-    </defs>
-    <rect width="1600" height="900" fill="url(#sky)"/>
-    <g id="stars"></g>
-    <circle id="moon" cx="1330" cy="180" r="34" fill="#F6F1DC"/>
-    <g id="far"></g>
-    <g id="houses"></g>
-    <!-- street -->
-    <rect id="pavement" x="0" y="700" width="1600" height="40" fill="#3A3570"/>
-    <rect id="road" x="0" y="740" width="1600" height="160" fill="#2A2558"/>
-    <g id="roadmarks" fill="#F2F2F7" opacity=".35"></g>
-    <!-- shop -->
-    <g id="canal"><rect x="0" y="620" width="780" height="80" id="water" fill="#3B3F8C"/><g id="ripples" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".18"></g></g>
-    <g id="shop" transform="translate(730 0)">
-      <rect x="70" y="470" width="360" height="230" id="shopWall" fill="#8E3B46"/>
-      <polygon points="60,470 440,470 420,440 80,440" id="shopRoof" fill="#6E2A35"/>
-      <rect x="100" y="490" width="300" height="46" rx="6" fill="#20194A"/>
-      <text x="250" y="521" text-anchor="middle" font-family="Archivo,Arial" font-weight="800" font-size="22" font-stretch="125%" fill="#FFFFFF">Phone repair</text>
-      <rect x="100" y="552" width="300" height="148" id="shopWindow" fill="#FFE2A6"/>
-      <g id="shopInside" fill="#8E3B46" opacity=".55"><rect x="130" y="640" width="90" height="60"/><rect x="260" y="610" width="40" height="90"/></g>
-      <rect x="100" y="552" width="300" height="0" id="shutter" fill="#B9B6CC"/>
-      <g id="shutterLines" stroke="#8F8BA8" stroke-width="2"></g>
-      <g id="openSign">
-        <rect x="300" y="566" width="84" height="30" rx="15" id="signBg" fill="#2E8C8A"/>
-        <text x="342" y="587" text-anchor="middle" font-family="Archivo,Arial" font-weight="700" font-size="15" id="signText" fill="#fff">Open</text>
-      </g>
-    </g>
-    <!-- lamps -->
-    <g id="lamps"></g>
-    <!-- van -->
-    <g id="van" transform="translate(1800 0)">
-      <polygon id="vanBeam" points="-10,770 -330,730 -330,850" fill="url(#beam)" opacity="0"/>
-      <ellipse cx="185" cy="852" rx="190" ry="10" fill="#000" opacity=".25"/>
-      <path d="M10 840 V740 Q10 700 50 690 L110 650 Q125 640 150 640 H350 Q370 640 370 660 V840 Z" fill="#FFB238"/>
-      <path d="M40 700 L105 660 Q115 654 128 654 H150 V712 H40 Z" fill="#2B2560" id="windshield"/>
-      <rect x="168" y="664" width="80" height="48" rx="6" fill="#2B2560" id="sidewin"/>
-      <rect x="10" y="800" width="360" height="12" fill="#E8930C"/>
-      <text x="262" y="770" text-anchor="middle" font-family="Archivo,Arial" font-weight="900" font-size="30" font-stretch="125%" fill="#20194A">Fix on</text>
-      <text x="262" y="796" text-anchor="middle" font-family="Archivo,Arial" font-weight="300" font-size="22" font-stretch="70%" fill="#20194A">Wheels, Ghent</text>
-      <rect x="16" y="752" width="18" height="12" rx="3" fill="#FFF4CF" id="headlight"/>
-      <circle id="workLight" cx="208" cy="688" r="70" fill="url(#workglow)" opacity="0"/>
-      <g class="wheel" transform="translate(90 840)"><circle r="30" fill="#20194A"/><circle r="13" fill="#CFCDE0"/><g id="spokeA" stroke="#20194A" stroke-width="3"><line x1="-13" y1="0" x2="13" y2="0"/><line x1="0" y1="-13" x2="0" y2="13"/></g></g>
-      <g class="wheel" transform="translate(300 840)"><circle r="30" fill="#20194A"/><circle r="13" fill="#CFCDE0"/><g id="spokeB" stroke="#20194A" stroke-width="3"><line x1="-13" y1="0" x2="13" y2="0"/><line x1="0" y1="-13" x2="0" y2="13"/></g></g>
-    </g>
-  </svg>
-
-  <div class="wrap hero-copy">
-    <h1 id="hero-title"><span>Shops close at six.</span><span class="l2">We start at six.</span></h1>
-    <p class="lede">Fix on Wheels is a repair van for phones and laptops in Ghent. We park outside your home or office on weekday evenings and Saturdays, and fix your device while you watch. Most repairs take 30 to 60 minutes.</p>
-    <div class="hero-actions">
-      <a class="btn btn-amber" href="#book">Book an evening slot</a>
-      <a class="btn btn-ghost" href="#area">Check your town</a>
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 id="hero-title"><span>Shops close at six.</span><span class="l2">We start at six.</span></h1>
+      <p class="lede">A repair van for phones and laptops in Ghent. We park at your door after work and fix your device while you watch.</p>
+      <div class="hero-actions">
+        <a class="btn btn-amber" href="#book">Book an evening slot</a>
+        <a class="btn btn-ghost" href="#area">Check your town</a>
+      </div>
     </div>
-  </div>
+    <div class="diorama" id="diorama">
+      <canvas id="scene" aria-hidden="true"></canvas>
+      <p class="hint">Drag the street to turn it.</p>
+    </div>
   </div>
 
   <div class="clockbar"><div class="wrap">
@@ -590,86 +550,18 @@ const topBar = document.getElementById('top');
 const onScroll = () => topBar.classList.toggle('solid', scrollY > 40);
 addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-/* ===== HERO SCENE ===== */
-const scene = document.getElementById('scene');
-const mq = matchMedia('(max-width:760px)');
-const setAspect = () => scene.setAttribute('preserveAspectRatio', mq.matches ? 'xMidYMax meet' : 'xMidYMax slice');
-mq.addEventListener('change', setAspect); setAspect();
-
-// stars
-const stars = document.getElementById('stars');
-for (let i = 0; i < 90; i++) el('circle', { cx: rnd()*1600, cy: rnd()*420, r: rnd()*1.6 + .4, fill: '#fff', opacity: rnd()*.7 + .3 }, stars);
-
-// far towers: a Ghent-ish trio of spires
-const far = document.getElementById('far');
-const towerPaths = [
-  'M200 620 V500 h20 v-24 h-8 l18-60 l18 60 h-8 v24 h20 V620 Z',
-  'M380 620 V470 h16 v-16 l26-100 l26 100 v16 h16 V620 Z',
-  'M560 620 V520 h14 v-30 h6 l10-50 l10 50 h6 v30 h14 V620 Z'
-];
-const farShapes = towerPaths.map(d => el('path', { d }, far));
-farShapes.push(el('rect', { x: 0, y: 600, width: 1600, height: 40 }, far));
-
-// gabled houses
-const housesG = document.getElementById('houses');
-const houses = []; const windows = [];
-let x = 760; const base = 700;
-const palette = ['#4A3F8A','#3F3A7E','#55468F','#463C86'];
-let yourDoor = null;
-while (x < 1640) {
-  const w = 110 + Math.floor(rnd()*60), h = 120 + Math.floor(rnd()*80);
-  const steps = 3 + Math.floor(rnd()*2), s = w / (2*steps + 2);
-  let d = `M${x} ${base} V${base-h}`; let cx = x, cy = base - h;
-  for (let i = 0; i < steps; i++) { cx += s; d += ` H${cx}`; cy -= s*.9; d += ` V${cy}`; }
-  d += ` H${cx + 2*s}`; cx += 2*s;
-  for (let i = 0; i < steps; i++) { cy += s*.9; d += ` V${cy}`; cx += s; d += ` H${cx}`; }
-  d += ` V${base} Z`;
-  const p = el('path', { d }, housesG); houses.push({ p, c: palette[houses.length % 4] });
-  const cols = Math.max(2, Math.floor(w / 46)), rows = Math.max(1, Math.floor((h - 50) / 58));
-  const gap = (w - cols*24) / (cols + 1);
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-    const wx = x + gap + c*(24+gap), wy = base - h + 26 + r*58;
-    windows.push({ n: el('rect', { x: wx, y: wy, width: 24, height: 36, rx: 3 }, housesG), on: 17.4 + rnd()*4.2 });
-  }
-  if (!yourDoor && x > 1260) {
-    yourDoor = el('rect', { x: x + w/2 - 18, y: base - 64, width: 36, height: 64, rx: 4 }, housesG);
-  }
-  x += w + 4;
-}
-
-// canal ripples
-const rip = document.getElementById('ripples');
-for (let i = 0; i < 16; i++) { const rx = rnd()*720, ry = 632 + rnd()*60, rl = 20 + rnd()*50; const ln = el('line', { x1: rx, x2: rx + rl, y1: ry, y2: ry }, rip); if (!reduce) ln.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${10 + rnd()*20}px)` }], { duration: 2500 + rnd()*2500, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' }); }
-// road marks
-const rm = document.getElementById('roadmarks');
-for (let i = 0; i < 20; i++) el('rect', { x: i*90, y: 818, width: 46, height: 5, rx: 2 }, rm);
-
-// shutter lines
-const sl = document.getElementById('shutterLines');
-const shutterLines = []; for (let i = 0; i < 14; i++) shutterLines.push(el('line', { x1: 100, x2: 400, y1: 0, y2: 0, opacity: 0 }, sl));
-
-// lamps
-const lampsG = document.getElementById('lamps');
-const lamps = [700, 1180].map(lx => {
-  const g = el('g', {}, lampsG);
-  const glow = el('circle', { cx: lx, cy: 548, r: 110, fill: 'url(#lampglow)', opacity: 0 }, g);
-  el('rect', { x: lx - 4, y: 548, width: 8, height: 160, fill: '#1E1A48' }, g);
-  el('path', { d: `M${lx-22} 548 h44 l-8 -22 h-28 z`, fill: '#1E1A48' }, g);
-  const bulb = el('rect', { x: lx - 14, y: 548, width: 28, height: 6, fill: '#55507F' }, g);
-  return { glow, bulb };
-});
+/* ===== HERO: sky, clock and status. The 3D street is drawn by the module script at the bottom. ===== */
+const $ = id => document.getElementById(id);
+const hero = document.querySelector('.hero'), starsEl = $('stars');
+{ const s = []; for (let i = 0; i < 110; i++) s.push(`${(rnd()*100).toFixed(2)}vw ${(rnd()*55).toFixed(2)}vh 0 ${rnd() < .25 ? 1 : 0}px rgba(255,255,255,${(rnd()*.6 + .3).toFixed(2)})`); starsEl.style.boxShadow = s.join(','); }
 
 const skyKeys = [
-  [17.0, '#6F86C9', '#B9A3C6', '#F6C79A'],
+  [17.0, '#5E74BC', '#A88FBB', '#F6C79A'],
   [18.0, '#4B4F9E', '#9C7AA8', '#F2A16E'],
   [18.8, '#2E2A72', '#5F4C8E', '#B56A8F'],
   [19.6, '#1E1A4F', '#2E2766', '#4B3B7E'],
   [22.0, '#100D2E', '#17133D', '#2A2460']
 ];
-const stage = document.querySelector('.stage');
-const skyStops = ['skyTop','skyMid','skyBot'].map(id => document.getElementById(id));
-const $ = id => document.getElementById(id);
-const van = $('van'), vanBeam = $('vanBeam'), workLight = $('workLight'), headlight = $('headlight');
 const readout = $('readout'), statusEl = $('status'), range = $('time');
 let lastStatus = '';
 
@@ -680,48 +572,10 @@ function render(min) {
   // sky
   let k = 0; while (k < skyKeys.length - 2 && h > skyKeys[k+1][0]) k++;
   const A = skyKeys[k], B = skyKeys[k+1], t = clamp((h - A[0]) / (B[0] - A[0]));
-  skyStops.forEach((s, i) => s.setAttribute('stop-color', mix(A[i+1], B[i+1], t)));
-  stage.style.background = mix(A[1], B[1], t);
-  const night = clamp((h - 17.6) / 2);
-  stars.setAttribute('opacity', clamp((h - 18.7) / 1.2));
-  $('moon').setAttribute('cy', lerp(260, 150, clamp((h - 17) / 5)));
-  $('moon').setAttribute('opacity', lerp(.35, 1, night));
-  const farC = mix('#7A6FB0', '#221E55', night), houseDark = night;
-  farShapes.forEach(s => s.setAttribute('fill', farC));
-  houses.forEach(o => o.p.setAttribute('fill', mix(o.c, '#1A1645', houseDark * .85)));
-  windows.forEach(w => w.n.setAttribute('fill', h >= w.on ? '#FFD27A' : mix('#6C64A6', '#2A2560', houseDark)));
-  $('pavement').setAttribute('fill', mix('#5B5598', '#2B2660', night));
-  $('water').setAttribute('fill', mix('#4C5AA6', '#1E1D52', night));
-  $('road').setAttribute('fill', mix('#45407F', '#1C1846', night));
-  $('shopWall').setAttribute('fill', mix('#A04752', '#5A2733', night));
-  // shutter closes 18:00 - 18:06
-  const sh = clamp((h - 18) / .1);
-  $('shutter').setAttribute('height', 148 * sh);
-  shutterLines.forEach((l, i) => { const y = 552 + i * 10.5; const vis = y < 552 + 148*sh; l.setAttribute('y1', y); l.setAttribute('y2', y); l.setAttribute('opacity', vis ? 1 : 0); });
-  const closed = h >= 18;
-  $('signText').textContent = closed ? 'Closed' : 'Open';
-  $('signBg').setAttribute('fill', closed ? '#8E3B46' : '#2E8C8A');
-  $('openSign').setAttribute('opacity', closed && sh >= 1 ? 0 : 1);
-  $('shopWindow').setAttribute('fill', closed ? '#3A3368' : '#FFE2A6');
-  // lamps
-  const lampOn = h >= 18.25;
-  lamps.forEach(l => { l.glow.setAttribute('opacity', lampOn ? .9 : 0); l.bulb.setAttribute('fill', lampOn ? '#FFE6A8' : '#55507F'); });
-  // your door window
-  if (yourDoor) yourDoor.setAttribute('fill', h >= 18.25 ? '#FFD27A' : mix('#2B2560', '#1A1645', night));
-  // van
-  const arrive = ease(clamp((h - 18.3) / .45));
-  const leave = clamp((h - 19.95) / .4);
-  let vx = lerp(1720, 1150, arrive) - leave * leave * 1700;
-  van.setAttribute('transform', `translate(${vx} 0)`);
-  const rot = (-vx * 0.9) % 360;
-  $('spokeA').setAttribute('transform', `rotate(${rot})`); $('spokeB').setAttribute('transform', `rotate(${rot})`);
-  const moving = (arrive > 0 && arrive < 1) || (leave > 0 && leave < 1);
-  const lightsOn = h > 18.3;
-  vanBeam.setAttribute('opacity', lightsOn && (moving || h > 19.95) ? 1 : 0);
-  headlight.setAttribute('fill', lightsOn ? '#FFF4CF' : '#E8E2C8');
-  const working = h >= 18.75 && h < 19.95;
-  workLight.setAttribute('opacity', working ? (0.75 + 0.25*Math.sin(min*2)) : 0);
-  $('sidewin').setAttribute('fill', working ? '#9FE9F2' : '#2B2560');
+  for (let i = 1; i <= 3; i++) hero.style.setProperty('--sky' + i, mix(A[i], B[i], t));
+  starsEl.style.opacity = clamp((h - 18.7) / 1.2);
+  // street
+  if (window.heroScene) window.heroScene(min);
   // text
   readout.textContent = fmt(min);
   range.setAttribute('aria-valuetext', fmt(min));
@@ -1043,6 +897,227 @@ $('bookForm').addEventListener('submit', e => {
   const c = $('confirm'); c.classList.add('show'); c.focus();
 });
 $('again').addEventListener('click', () => { $('confirm').classList.remove('show'); $('bookForm').style.display = ''; });
+/* ===== Phone tilts towards the pointer ===== */
+const phoneStage = document.querySelector('.phone-stage');
+phoneStage.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  const r = phoneStage.getBoundingClientRect();
+  phone.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 28 + 'deg');
+  phone.style.setProperty('--rx', (.5 - (e.clientY - r.top) / r.height) * 16 + 'deg');
+});
+phoneStage.addEventListener('pointerleave', () => { phone.style.removeProperty('--ry'); phone.style.removeProperty('--rx'); });
+</script>
+<!-- 3D street in the hero. If this fails to load, the page still works without it. -->
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const box = document.getElementById('diorama'), canvas = document.getElementById('scene');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+
+try {
+  await document.fonts.load('800 64px Archivo').catch(() => {});
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(26, 1, 1, 120);
+  const world = new THREE.Group(); scene.add(world);
+
+  const M = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: .85, ...o });
+  const glow = (color, emissive) => new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity: 0, roughness: .6 });
+  const block = (w, h, d, mat, x, y, z, parent = world) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m;
+  };
+  const label = (w, h, bg, lines) => {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d'); g.fillStyle = bg; g.fillRect(0, 0, w, h);
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    lines.forEach(([txt, font, fill, y]) => { g.font = font; g.fillStyle = fill; g.fillText(txt, w/2, y); });
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+  };
+
+  /* ground: a cut-out block of street, with the canal along the front */
+  const W = 16, PAV = .18;
+  block(W, 1.6, 7.8, M('#2A2466'), 0, -.8, -1.1);
+  block(W, PAV, 4.2, M('#6A63A8'), 0, PAV/2, -2.9);
+  block(W, .06, 3.6, M('#4A4488'), 0, .03, 1);
+  for (let x = -7.2; x < 8; x += 1.6) block(.8, .02, .1, M('#E9EAF6'), x, .07, 1.25).castShadow = false;
+  block(W, 1.6, .25, M('#3A3380'), 0, -.8, 4.875);
+  const water = block(W, 1.25, 1.95, M('#4C6FC2', { roughness: .15, metalness: .35, transparent: true, opacity: .88 }), 0, -.975, 3.775);
+  water.castShadow = false;
+
+  /* three towers behind the roofs */
+  const towerMat = M('#3F3987');
+  [[-6.4, 7.2], [-3.9, 8.8], [-1.5, 6.6]].forEach(([x, h]) => {
+    block(.95, h, .95, towerMat, x, h/2, -3.9);
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(.78, 2.4, 4), towerMat);
+    cone.position.set(x, h + 1.2, -3.9); cone.rotation.y = Math.PI/4; cone.castShadow = true; world.add(cone);
+  });
+
+  /* step-gabled houses; number 1 is the repair shop, number 3 is your house */
+  const FRONT = -1.6, winOff = M('#2F2A68', { roughness: .3 }), winOn = glow('#FFD27A', '#FFC25E'); winOn.emissiveIntensity = 1.6;
+  const windows = [];
+  const gable = (w, h, steps) => {
+    const s = new THREE.Shape(), st = w / (2*steps + 2); let x = -w/2, y = h;
+    s.moveTo(-w/2, 0); s.lineTo(x, y);
+    for (let i = 0; i < steps; i++) { x += st; s.lineTo(x, y); y += st*.9; s.lineTo(x, y); }
+    x += 2*st; s.lineTo(x, y);
+    for (let i = 0; i < steps; i++) { y -= st*.9; s.lineTo(x, y); x += st; s.lineTo(x, y); }
+    s.lineTo(w/2, 0); return s;
+  };
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const plots = [[3.0, 3.6, '#5A4E9E', 3], [3.6, 3.3, '#8E3B46', 4], [2.8, 4.3, '#4A4590', 3], [3.4, 3.5, '#6A5AA8', 4], [3.2, 4.0, '#51479A', 3]];
+  let shutter, shopGlass, yourDoor, hx = -W/2;
+  plots.forEach(([w, h, color, steps], i) => {
+    const cx = hx + w/2; hx += w;
+    const house = new THREE.Mesh(new THREE.ExtrudeGeometry(gable(w - .06, h, steps), { depth: 3, bevelEnabled: false }), M(color));
+    house.position.set(cx, PAV, FRONT - 3); house.castShadow = house.receiveShadow = true; world.add(house);
+    const shop = i === 1, z = FRONT + .02;
+    const cols = Math.max(2, Math.floor(w / 1.1)), gap = (w - cols*.5) / (cols + 1);
+    for (let y = h - .8; y > (shop ? 2.6 : 2.0); y -= 1.2) for (let c = 0; c < cols; c++) {
+      const m = block(.5, .75, .06, winOff, cx - w/2 + gap + .25 + c*(.5 + gap), PAV + y, z); m.castShadow = false;
+      windows.push({ m, on: 17.4 + rnd()*4.2 });
+    }
+    if (shop) {
+      shopGlass = block(2.7, 1.3, .06, glow('#FFE2A6', '#FFD27A'), cx, PAV + .85, z); shopGlass.castShadow = false;
+      const sign = new THREE.Mesh(new THREE.PlaneGeometry(2.9, .46), new THREE.MeshStandardMaterial({ map: label(580, 92, '#20194A', [['Phone repair', '800 54px Archivo, Arial', '#fff', 50]]), roughness: .7 }));
+      sign.position.set(cx, PAV + 1.95, z + .03); world.add(sign);
+      const g = new THREE.BoxGeometry(2.8, 1.4, .08); g.translate(0, -.7, 0);
+      shutter = new THREE.Mesh(g, M('#B9B6CC', { roughness: .5, metalness: .3 })); shutter.position.set(cx, PAV + 1.55, z + .05); world.add(shutter);
+    } else {
+      const door = block(.62, 1.25, .06, i === 3 ? glow('#2B2560', '#FFC25E') : M('#241F5A'), cx + (i === 3 ? 0 : (i % 2 ? .7 : -.7)), PAV + .625, z);
+      door.castShadow = false; if (i === 3) yourDoor = door;
+    }
+  });
+
+  /* street lamps */
+  const lampMat = M('#1E1A48');
+  const lamps = [-1.4, 5.0].map(x => {
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(.05, .06, 2.5, 8), lampMat); pole.position.set(x, PAV + 1.25, -1.05); pole.castShadow = true; world.add(pole);
+    block(.24, .08, .7, lampMat, x, PAV + 2.52, -.8);
+    const bulb = block(.2, .05, .4, glow('#55507F', '#FFE6A8'), x, PAV + 2.46, -.68); bulb.castShadow = false;
+    const light = new THREE.PointLight('#FFD27A', 0, 10, 1.6); light.position.set(x, PAV + 2.2, -.5); world.add(light);
+    return { bulb, light };
+  });
+
+  /* the van: nose at local x = 0, tail at 4.6 */
+  const van = new THREE.Group(); world.add(van); van.position.z = .45;
+  const amber = M('#FFB238', { roughness: .45 }), glass = M('#2B2560', { roughness: .2, metalness: .4 });
+  const prof = new THREE.Shape();
+  prof.moveTo(0, .38); prof.lineTo(0, 1.2); prof.lineTo(.55, 1.5); prof.lineTo(1.3, 2.35); prof.lineTo(4.45, 2.35);
+  prof.quadraticCurveTo(4.6, 2.35, 4.6, 2.2); prof.lineTo(4.6, .38);
+  const bodyGeo = new THREE.ExtrudeGeometry(prof, { depth: 1.8, bevelEnabled: true, bevelSize: .05, bevelThickness: .05, bevelSegments: 2 }); bodyGeo.translate(0, 0, -.9);
+  const body = new THREE.Mesh(bodyGeo, amber); body.castShadow = true; van.add(body);
+  const shield = block(1.0, .04, 1.66, glass, .925 - .03, 1.925 + .03, 0, van); shield.rotation.z = Math.atan2(.85, .75);
+  const sideWins = [1, -1].map(s => block(.78, .52, .04, glow('#2B2560', '#9FE9F2'), 1.85, 1.9, s * .96, van));
+  block(4.62, .14, 1.94, M('#E8930C', { roughness: .5 }), 2.3, .72, 0, van);
+  const heads = [1, -1].map(s => block(.06, .14, .3, glow('#E8E2C8', '#FFF4CF'), -.04, 1.0, s * .6, van));
+  const beam = new THREE.Mesh(new THREE.ConeGeometry(1.0, 4.2, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#FFE6A8', transparent: true, opacity: .16, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }));
+  beam.rotation.z = -Math.PI/2; beam.position.set(-2.1, .95, 0); van.add(beam);
+  // workshop behind a sliding side door
+  const bench = block(1.2, 1.4, .04, glow('#12303A', '#9FE9F2'), 2.75, 1.32, .955, van); bench.castShadow = false;
+  const door = new THREE.Group(); van.add(door); door.position.set(2.75, 1.32, 1.0);
+  block(1.26, 1.5, .06, amber, 0, 0, 0, door);
+  const logo = new THREE.Mesh(new THREE.PlaneGeometry(1.16, .58), new THREE.MeshStandardMaterial({ roughness: .45, map: label(464, 232, '#FFB238', [['Fix on', '900 96px Archivo, Arial', '#20194A', 84], ['Wheels, Ghent', '400 52px Archivo, Arial', '#20194A', 170]]) }));
+  logo.position.set(0, .1, .035); door.add(logo);
+  const workLight = new THREE.PointLight('#9FE9F2', 0, 7, 1.6); workLight.position.set(2.75, 1.3, 1.9); van.add(workLight);
+  const tyre = M('#1A1540', { roughness: .9 }), hub = M('#CFCDE0', { roughness: .4, metalness: .3 });
+  const wheels = [[.95, 1], [.95, -1], [3.65, 1], [3.65, -1]].map(([x, s]) => {
+    const g = new THREE.Group(); g.position.set(x, .42, s * .86); van.add(g);
+    const t = new THREE.Mesh(new THREE.CylinderGeometry(.42, .42, .28, 24), tyre); t.rotation.x = Math.PI/2; t.castShadow = true; g.add(t);
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .3, 16), hub); c.rotation.x = Math.PI/2; g.add(c);
+    block(.34, .06, .31, tyre, 0, 0, 0, g).castShadow = false;
+    return g;
+  });
+
+  /* light */
+  const hemi = new THREE.HemisphereLight('#B9C4FF', '#3A2E6E', 1); scene.add(hemi);
+  const sun = new THREE.DirectionalLight('#FFC89A', 2); sun.position.set(-9, 11, 9); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0006; sun.shadow.normalBias = .03;
+  Object.assign(sun.shadow.camera, { left: -12, right: 12, top: 12, bottom: -12, near: 1, far: 40 }); scene.add(sun);
+  const dusk = new THREE.Color('#FFC89A'), moon = new THREE.Color('#8FA0FF'), skyDay = new THREE.Color('#C9CFFF'), skyNight = new THREE.Color('#4A4FB0');
+  const waterDay = new THREE.Color('#4C6FC2'), waterNight = new THREE.Color('#1E2A6E');
+
+  let dirty = true;
+  function apply(min) {
+    const h = min / 60, night = clamp((h - 17.6) / 2);
+    sun.color.lerpColors(dusk, moon, night); sun.intensity = lerp(2.6, .5, night);
+    sun.position.set(lerp(-9, 6, night), lerp(8, 13, night), 9);
+    hemi.color.lerpColors(skyDay, skyNight, night); hemi.intensity = lerp(1.6, .8, night);
+    water.material.color.lerpColors(waterDay, waterNight, night);
+    windows.forEach(w => { w.m.material = h >= w.on ? winOn : winOff; });
+    // shop: shutter comes down between 18:00 and 18:06
+    const sh = clamp((h - 18) / .1);
+    shutter.visible = sh > 0; shutter.scale.y = Math.max(sh, .001);
+    shopGlass.material.emissiveIntensity = h >= 18 ? 0 : 1.3;
+    shopGlass.material.color.set(h >= 18 ? '#3A3368' : '#FFE2A6');
+    const lampOn = h >= 18.25;
+    lamps.forEach(l => { l.light.intensity = lampOn ? 14 : 0; l.bulb.material.emissiveIntensity = lampOn ? 2.5 : 0; });
+    yourDoor.material.emissiveIntensity = lampOn ? 1.4 : 0;
+    // van: appears at the right edge, parks at your door, leaves on the left
+    const a = clamp((h - 18.3) / .45), arrive = ease(a), l = clamp((h - 19.95) / .4);
+    const x = lerp(7.6, 1.0, arrive) - l * l * 9.4;
+    van.position.x = x;
+    van.scale.setScalar(Math.max(.001, ease(clamp(a * 5)) * (1 - ease(clamp((l - .7) / .3)))));
+    van.visible = a > 0 && l < 1;
+    wheels.forEach(w => { w.rotation.z = x / .42; });
+    const moving = (a > 0 && a < 1) || l > 0, lightsOn = h > 18.3;
+    beam.visible = lightsOn && moving;
+    heads.forEach(m => { m.material.emissiveIntensity = lightsOn ? 2.5 : 0; });
+    const working = h >= 18.75 && h < 19.95;
+    const open = ease(clamp((h - 18.75) / .08)) * (1 - ease(clamp((h - 19.87) / .08)));
+    door.position.x = 2.75 + open * 1.2;
+    bench.material.emissiveIntensity = working ? 1.5 + .3 * Math.sin(min * 2) : 0;
+    sideWins.forEach(m => { m.material.emissiveIntensity = working ? .9 : 0; });
+    workLight.intensity = working ? 9 + 2 * Math.sin(min * 2) : 0;
+    dirty = true;
+  }
+
+  /* view: follows the pointer, drag to turn */
+  let yaw = .52, drag = 0, px = 0, py = 0, pitch = 0, dragging = false, lastX = 0, visible = true;
+  const hero = document.querySelector('.hero');
+  hero.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' && !reduce) { px = e.clientX / innerWidth - .5; py = e.clientY / innerHeight - .5; } });
+  canvas.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; canvas.setPointerCapture(e.pointerId); canvas.classList.add('dragging'); });
+  canvas.addEventListener('pointermove', e => { if (!dragging) return; drag = clamp(drag + (e.clientX - lastX) * .007, -1.25, .75); lastX = e.clientX; });
+  const stop = () => { dragging = false; canvas.classList.remove('dragging'); };
+  canvas.addEventListener('pointerup', stop); canvas.addEventListener('pointercancel', stop);
+
+  function size() {
+    const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); camera.aspect = w / h;
+    camera.userData.dist = 28 * Math.max(1, 1.5 / camera.aspect);
+    camera.updateProjectionMatrix(); dirty = true;
+  }
+  new ResizeObserver(size).observe(box); size();
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(box);
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (!visible) return;
+    const target = .52 + drag + px * .3;
+    if (Math.abs(target - yaw) > .0005 || Math.abs(py - pitch) > .0005) { yaw += (target - yaw) * .09; pitch += (py - pitch) * .09; dirty = true; }
+    if (!reduce) { world.position.y = Math.sin(now / 1400) * .1; dirty = true; }
+    if (!dirty) return; dirty = false;
+    world.rotation.y = yaw;
+    const d = camera.userData.dist;
+    camera.position.set(0, d * (.36 - pitch * .08), d); camera.lookAt(0, 1.5, 0);
+    renderer.render(scene, camera);
+  }
+
+  window.heroScene = apply;
+  apply(+document.getElementById('time').value);
+  requestAnimationFrame(frame);
+} catch (err) {
+  console.warn('3D street unavailable:', err);
+  box.classList.add('flat');
+}
 </script>
 </body>
 </html>
