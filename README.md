@@ -2,7 +2,7 @@
 
 Website for Fix on Wheels, a mobile phone and laptop repair van in Ghent (Rune Waltniel & Lothar Van Cauwenbergh).
 
-Everything is in one file: `index.html`. Open it in a browser, no build step.
+The whole site is one file, `index.html`, plus the browser icons (`favicon.svg`, `favicon.png`, `apple-touch-icon.png`). Open `index.html` in a browser, no build step.
 
 ## Before going live
 
